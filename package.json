@@ -8,9 +8,6 @@
   "files": [
     "dist"
   ],
-  "directories": {
-    "src": "src"
-  },
   "scripts": {
     "test": "jest",
     "build": "tsup"
