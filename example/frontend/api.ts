@@ -1,4 +1,4 @@
-import { JsonExchangeCustomerHandler } from "../../lib/customer";
+import { JsonExchangeCustomerHandler } from "../../src/customer";
 import { apiExchanges } from "../common/api";
 
 const jsonExchangeCustomerFetchHandler = new JsonExchangeCustomerHandler(apiExchanges, 'MOCK AUTH');

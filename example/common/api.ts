@@ -1,5 +1,5 @@
-import { BasicValidation } from "../../lib/basic-validation";
-import { JsonExchange } from "../../lib/common";
+import { BasicValidation } from "../../src/basic-validation";
+import { JsonExchange } from "../../src/common";
 
 export interface Test1RequestDto {
     test1String: string;

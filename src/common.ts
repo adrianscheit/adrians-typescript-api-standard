@@ -31,6 +31,6 @@ export class JsonExchange<REQ_DTO, RES_DTO> {
         if (jsonExchangeOrExchanges instanceof JsonExchange) {
             return [[prefix, jsonExchangeOrExchanges]];
         }
-        return Object.entries(jsonExchangeOrExchanges).flatMap(([key, child]) => this.extractAllExchangesAsEntries(child, `${prefix}${key}.`));
+        return Object.entries(jsonExchangeOrExchanges).flatMap(([key, child]) => this.extractAllExchangesAsEntries(child, `${prefix ? prefix + '.' : ''}${key}`));
     }
 }

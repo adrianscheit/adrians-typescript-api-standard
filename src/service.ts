@@ -15,7 +15,10 @@ export class JsonExchangeServiceHandler<CustomerContext> {
     registerHandle<REQ_DTO, RES_DTO>(jsonExchange: JsonExchange<REQ_DTO, RES_DTO>, handle: ServiceHandle<CustomerContext, REQ_DTO, RES_DTO>): void {
         const key = this.jsonExchangeToKey.get(jsonExchange);
         if (!key) {
-            throw new Error(`${key} This exchange was not found!`);
+            throw new Error(`exchange was not found!`);
+        }
+        if (this.handles.has(key)) {
+            throw new Error(`${key} is already registered!`);
         }
         this.handles.set(key, handle);
     }
@@ -37,7 +40,7 @@ export class JsonExchangeServiceHandler<CustomerContext> {
             jsonExchange.options.postProcessor?.(response, request);
             return response;
         }
-        throw `Exchange key ${key} not found`;
+        throw `Exchange key "${key}" not found!`;
     }
 }
 

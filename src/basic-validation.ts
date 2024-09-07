@@ -73,7 +73,7 @@ export class BasicValidation {
             try {
                 coveredIfLabel();
             } catch (err) {
-                throw new Error(`${options.label}: ${err.message}`);
+                throw new Error(`${options.label}: ${(err as Error).message}`);
             }
         } else {
             coveredIfLabel();
