@@ -1,3 +1,5 @@
+export type JsonExchangeOrExchanges = JsonExchange<any, any> | { [key: string]: JsonExchangeOrExchanges };
+export type JsonExchangesRoot = { [key: string]: JsonExchangeOrExchanges };
 export class JsonExchange<REQ_DTO, RES_DTO> {
     constructor(
         readonly options: {
@@ -19,23 +21,20 @@ export class JsonExchange<REQ_DTO, RES_DTO> {
         update: new JsonExchange<DTO, DTO>({ preProcessor }),
         delete: new JsonExchange<PK, void>(),
     });
+
+    static extractAllExchangesAsEntries(jsonExchangeOrExchanges: JsonExchangeOrExchanges, prefix: string = ''): [string, JsonExchange<any, any>][] {
+        if (jsonExchangeOrExchanges instanceof JsonExchange) {
+            return [[prefix, jsonExchangeOrExchanges]];
+        }
+        return Object.entries(jsonExchangeOrExchanges).flatMap(([key, child]) => this.extractAllExchangesAsEntries(child, `${prefix}${key}.`));
+    }
 }
 
-export type JsonExchangeOrExchanges = JsonExchange<any, any> | { [key: string]: JsonExchangeOrExchanges };
-export type JsonExchangesRoot = { [key: string]: JsonExchangeOrExchanges };
-const extractAllExchangesAsEntries = (jsonExchangeOrExchanges: JsonExchangeOrExchanges, prefix: string = ''): [string, JsonExchange<any, any>][] => {
-    if (jsonExchangeOrExchanges instanceof JsonExchange) {
-        return [[prefix, jsonExchangeOrExchanges]];
-    }
-    return Object.entries(jsonExchangeOrExchanges).flatMap(([key, child]) => extractAllExchangesAsEntries(child, `${prefix}${key}.`));
-};
-
-export type CustomerHandle<REQ_DTO = any, RES_DTO = any> = (request: REQ_DTO) => Promise<RES_DTO>;
 export class JsonExchangeCustomerFetchHandler {
     readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
 
     constructor(jsonExchanges: JsonExchangesRoot, readonly authorizationHeader: string = '', readonly backendPrefix: string = '') {
-        const entities = extractAllExchangesAsEntries(jsonExchanges);
+        const entities = JsonExchange.extractAllExchangesAsEntries(jsonExchanges);
         this.jsonExchangeToKey = new Map<JsonExchange<any, any>, string>(entities.map(([a, b]) => [b, a]));
 
     }
@@ -74,7 +73,7 @@ export class JsonExchangeServiceHandler<CustomerContext> {
     protected readonly handles: Map<string, ServiceHandle<CustomerContext>> = new Map<string, ServiceHandle<CustomerContext>>();
 
     constructor(jsonExchanges: JsonExchangesRoot) {
-        const entities = extractAllExchangesAsEntries(jsonExchanges);
+        const entities = JsonExchange.extractAllExchangesAsEntries(jsonExchanges);
         this.keyToJsonExchange = new Map<string, JsonExchange<any, any>>(entities);
         this.jsonExchangeToKey = new Map<JsonExchange<any, any>, string>(entities.map(([a, b]) => [b, a]));
     }
