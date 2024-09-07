@@ -1,12 +1,8 @@
-export type JsonExchangeHandle<REQ_DTO = any, RES_DTO = any> = (request: REQ_DTO) => Promise<RES_DTO>;
-
-
 export class JsonExchange<REQ_DTO, RES_DTO> {
     constructor(
-        protected readonly options: {
+        readonly options: {
             preProcessor?: (request: REQ_DTO) => void;
             postProcessor?: (response: RES_DTO, request: REQ_DTO) => void;
-            handleWrapper?: (request: REQ_DTO, handle: JsonExchangeHandle<REQ_DTO, RES_DTO>) => Promise<RES_DTO>;
         } = {}
     ) { }
 
@@ -36,15 +32,15 @@ const extractAllExchangesAsEntries = (jsonExchangeOrExchanges: JsonExchangeOrExc
 
 export type CustomerHandle<REQ_DTO = any, RES_DTO = any> = (request: REQ_DTO) => Promise<RES_DTO>;
 export class JsonExchangeCustomerFetchHandler {
-    protected readonly handles: Map<JsonExchange<any, any>, CustomerHandle> = new Map<JsonExchange<any, any>, CustomerHandle>();
+    readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
 
     constructor(jsonExchanges: JsonExchangesRoot, readonly authorizationHeader: string = '', readonly backendPrefix: string = '') {
-        extractAllExchangesAsEntries(jsonExchanges).forEach(([key, jsonExchange]) =>
-            this.handles.set(jsonExchange, (request) => this._exchange(key, request))
-        );
+        const entities = extractAllExchangesAsEntries(jsonExchanges);
+        this.jsonExchangeToKey = new Map<JsonExchange<any, any>, string>(entities.map(([a, b]) => [b, a]));
+
     }
 
-    protected async _exchange<REQ, RES>(key: string, request: REQ): Promise<RES> {
+    protected async _exchange<REQ_DTO, RES_DTO>(key: string, request: REQ_DTO): Promise<RES_DTO> {
         const fetchResponse = await fetch(
             `${this.backendPrefix}/api/exchange/${encodeURIComponent(key)}`,
             {
@@ -59,26 +55,32 @@ export class JsonExchangeCustomerFetchHandler {
         return await fetchResponse.json();
     }
 
-    exchange<REQ_DTO, RES_DTO>(jsonExchange: JsonExchange<REQ_DTO, RES_DTO>, request: REQ_DTO): Promise<RES_DTO> {
-        const handle = this.handles.get(jsonExchange);
-        if (handle) {
-            return handle(request);
+    async exchange<REQ_DTO, RES_DTO>(jsonExchange: JsonExchange<REQ_DTO, RES_DTO>, request: REQ_DTO): Promise<RES_DTO> {
+        const key = this.jsonExchangeToKey.get(jsonExchange);
+        if (key) {
+            jsonExchange.options.preProcessor?.(request);
+            const response = await this._exchange<REQ_DTO, RES_DTO>(key, request);
+            jsonExchange.options.postProcessor?.(response, request);
+            return response;
         }
         throw `Exchange not found`;
     }
 }
 
-export type ServiceHandle<CustomerContext, REQ_DTO = any, RES_DTO = any> = (request: REQ_DTO, customerContext: CustomerContext) => Promise<RES_DTO>;
+export type ServiceHandle<CustomerContext, REQ_DTO = any, RES_DTO = any> = (request: REQ_DTO, customerContext: CustomerContext, key: string) => Promise<RES_DTO>;
 export class JsonExchangeServiceHandler<CustomerContext> {
-    readonly flattedExchanges: ReadonlyMap<JsonExchange<any, any>, string>;
+    readonly keyToJsonExchange: ReadonlyMap<string, JsonExchange<any, any>>;
+    readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
     protected readonly handles: Map<string, ServiceHandle<CustomerContext>> = new Map<string, ServiceHandle<CustomerContext>>();
 
     constructor(jsonExchanges: JsonExchangesRoot) {
-        this.flattedExchanges = new Map(extractAllExchangesAsEntries(jsonExchanges).map(([a, b]) => [b, a]));
+        const entities = extractAllExchangesAsEntries(jsonExchanges);
+        this.keyToJsonExchange = new Map<string, JsonExchange<any, any>>(entities);
+        this.jsonExchangeToKey = new Map<JsonExchange<any, any>, string>(entities.map(([a, b]) => [b, a]));
     }
 
     registerHandle<REQ_DTO, RES_DTO>(jsonExchange: JsonExchange<REQ_DTO, RES_DTO>, handle: ServiceHandle<CustomerContext, REQ_DTO, RES_DTO>): void {
-        const key = this.flattedExchanges.get(jsonExchange);
+        const key = this.jsonExchangeToKey.get(jsonExchange);
         if (!key) {
             throw new Error(`${key} This exchange was not found!`);
         }
@@ -87,16 +89,21 @@ export class JsonExchangeServiceHandler<CustomerContext> {
 
     validate(): void {
         const registeredKeys = new Set<string>(this.handles.keys());
-        const missingKeys = [...this.flattedExchanges.values()].filter((key) => !registeredKeys.has(key))
+        const missingKeys = [...this.jsonExchangeToKey.values()].filter((key) => !registeredKeys.has(key))
         if (missingKeys.length) {
             throw new Error(`There are JSON exchanges with out defined handle: ${missingKeys.join()} `);
         }
     }
 
-    handleRequest(key: string, request: any, customerContext: CustomerContext): Promise<any> {
+    async handleRequest(key: string, request: any, customerContext: CustomerContext): Promise<any> {
         const handle = this.handles.get(key);
         if (handle) {
-            return handle(request, customerContext);
+            const jsonExchange = this.keyToJsonExchange.get(key)!;
+            jsonExchange.options.preProcessor?.(request);
+            const response = await handle(request, customerContext, key);
+            jsonExchange.options.postProcessor?.(response, request);
+            return response;
+
         }
         throw `Exchange key ${key} not found`;
     }

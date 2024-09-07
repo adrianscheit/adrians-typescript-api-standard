@@ -1,7 +1,16 @@
-import { JsonExchangeBackendHandler } from "../../lib/json-api";
+import { JsonExchangeServiceHandler } from "../../lib/json-api";
 import { apiExchanges } from "../common/api";
 
-apiExchanges.crudTest1.create.setHandle(async (r) => { return r; });
-apiExchanges.crudTest1.readSome.setHandle(async (r) => { return []; });
+interface CustomerData {
+    name: string;
+    email: string;
+    permissions: ReadonlySet<string>;
+}
 
-const b = new JsonExchangeBackendHandler(apiExchanges);
+const jsonExchangeServiceHandler = new JsonExchangeServiceHandler<CustomerData>(apiExchanges);
+
+jsonExchangeServiceHandler.registerHandle(apiExchanges.crudTest1.create, async (request, _) => {
+    return request;
+});
+
+jsonExchangeServiceHandler.validate();
