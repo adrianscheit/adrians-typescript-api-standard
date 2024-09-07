@@ -33,4 +33,11 @@ export class SimpleStatistics {
     requestSize = new SimpleStatistic();
     responseSize = new SimpleStatistic();
     success = new SimpleStatistic();
+
+    report(duration: number, requestSize: number, responseSize: number, success: number): void {
+        this.duration.report(duration);
+        this.requestSize.report(requestSize);
+        this.responseSize.report(responseSize);
+        this.success.report(success);
+    }
 }
