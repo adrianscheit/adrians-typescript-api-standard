@@ -1,4 +1,4 @@
-import { JsonExchangeServiceHandler } from "../../lib/json-api";
+import { JsonExchangeServiceHandler } from "../../lib/service";
 import { apiExchanges } from "../common/api";
 
 interface CustomerData {

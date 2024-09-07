@@ -1,6 +1,6 @@
-import { JsonExchangeCustomerFetchHandler } from "../../lib/json-api";
+import { JsonExchangeCustomerHandler } from "../../lib/customer";
 import { apiExchanges } from "../common/api";
 
-const jsonExchangeCustomerFetchHandler = new JsonExchangeCustomerFetchHandler(apiExchanges, 'MOCK AUTH');
+const jsonExchangeCustomerFetchHandler = new JsonExchangeCustomerHandler(apiExchanges, 'MOCK AUTH');
 
 jsonExchangeCustomerFetchHandler.exchange(apiExchanges.crudTest1.create, { test1Number: 123, test1String: 'ABC' });

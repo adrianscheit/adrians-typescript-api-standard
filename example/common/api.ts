@@ -1,5 +1,5 @@
 import { BasicValidation } from "../../lib/basic-validation";
-import { JsonExchange } from "../../lib/json-api";
+import { JsonExchange } from "../../lib/common";
 
 export interface Test1RequestDto {
     test1String: string;
@@ -30,7 +30,7 @@ export const apiExchanges = {
     }),
     test2: new JsonExchange<undefined, Test2ResponseDto>(),
     test3: new JsonExchange<Test3RequestDto, undefined>(),
-    crudTest1: JsonExchange.generateCRUDJsonExchanges<string, Test1RequestDto>((request) => {
+    crudTest1: JsonExchange.generateCRUDExchanges<string, Test1RequestDto>((request) => {
         BasicValidation.validateString(request.test1String, { minLength: 2, maxLength: 50 });
         BasicValidation.validateNumber(request.test1Number, { min: 0, max: 99 });
     }),
