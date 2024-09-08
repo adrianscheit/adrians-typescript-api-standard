@@ -18,6 +18,10 @@ The idea is to have a common code base for both sides of API communications. It 
 - simple request validation errors could be immediately detected by the customer, without sending the request
 - simple response validation errors could be immediately detected by the service, without sending the response
 
+### Cases
+- standard JSON exchanges, cusomer sends JSON/void as request body, service responds with JSON/void
+- files transfers, file names should be UUID so nobody should be able to guess it, then the name should be stored/handled by JSON exchange
+- WebSockets, for events triggered by service, although it does not seems clear and simple
 
 ## Limitations
 - it is only limited to TypeScript so practically it means any modern WEB browser frontend with some SPA, does not matter if it is Angular, React or Vue, and some Node backend, or serverless Node functions. It does not work directly with Java, Go, Ruby, Phyton, although with some Node middleware it should work, but then the whole idea is broken, as there would be next API that will be again very expensive. 
