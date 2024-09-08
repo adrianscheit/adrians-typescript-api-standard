@@ -28,7 +28,8 @@ The idea is to have a common code base for both sides of API communications. It 
 
 
 ## Intendent use
-- ```sh
+- Install it:
+```sh
 npm i adrians-typescript-api-standard
 ```
 - define common code with JsonExchanges, TDD all processing functions
