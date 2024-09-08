@@ -55,7 +55,7 @@ export class CustomerExchangeAngularHttpClient extends CustomerExchange {
     }
 }
 
-export class JsonExchangeCustomerHandler {
+export class JsonExchangeCustomerAgent {
     readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
 
     constructor(

@@ -1,6 +1,6 @@
 {
   "name": "adrians-typescript-api-standard",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Its is an attempt to define some universal solution for keeping synchronised API of SPA frontend and Node backend. The plan is to support: simple JSON exchanges, files upload solution, WebSocket solution",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

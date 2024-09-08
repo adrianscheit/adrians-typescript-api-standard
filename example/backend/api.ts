@@ -1,4 +1,4 @@
-import { JsonExchangeServiceHandler } from "../../src/service";
+import { JsonExchangeServiceAgent } from "../../src/service";
 import { apiExchanges } from "../common/api";
 
 interface CustomerData {
@@ -7,7 +7,7 @@ interface CustomerData {
     permissions: ReadonlySet<string>;
 }
 
-const jsonExchangeServiceHandler = new JsonExchangeServiceHandler<CustomerData>(apiExchanges);
+const jsonExchangeServiceHandler = new JsonExchangeServiceAgent<CustomerData>(apiExchanges);
 
 jsonExchangeServiceHandler.registerHandle(apiExchanges.crudTest1.create, async (request, _) => {
     return request;

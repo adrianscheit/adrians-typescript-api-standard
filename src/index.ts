@@ -1,5 +1,4 @@
 export { JsonExchange } from './common';
-export { JsonExchangeServiceHandler } from './service';
-export { JsonExchangeCustomerHandler } from './customer';
+export { JsonExchangeServiceAgent } from './service';
+export { JsonExchangeCustomerAgent } from './customer';
 export { BasicValidation } from './basic-validation';
-export { SimpleStatistics } from './simple-statistic';

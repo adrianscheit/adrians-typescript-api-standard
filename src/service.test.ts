@@ -1,5 +1,5 @@
 import { JsonExchange } from "./common";
-import { JsonExchangeServiceHandler } from "./service";
+import { JsonExchangeServiceAgent } from "./service";
 
 describe('service', () => {
     const oneExchange = {
@@ -14,7 +14,7 @@ describe('service', () => {
     };
 
     test('requests are able to be correctly handled', async () => {
-        const jsonExchangeServiceHandler = new JsonExchangeServiceHandler(fewExchanges);
+        const jsonExchangeServiceHandler = new JsonExchangeServiceAgent(fewExchanges);
         jsonExchangeServiceHandler.registerHandle(fewExchanges.testNested.c, async (request, userContext, key) => {
             expect(request).toBe(1234);
             expect(userContext).toEqual({ user: 'mock' });
@@ -22,12 +22,12 @@ describe('service', () => {
             return 5678;
         });
 
-        const response = await jsonExchangeServiceHandler.handleRequest('testNested.c', 1234, { user: 'mock' });
-        expect(response).toBe(5678);
+        const response = await jsonExchangeServiceHandler.handleRequest('testNested.c', '1234', { user: 'mock' });
+        expect(response).toBe('5678');
     });
 
     test('validate works for one simple exchange', () => {
-        const jsonExchangeServiceHandler = new JsonExchangeServiceHandler(oneExchange);
+        const jsonExchangeServiceHandler = new JsonExchangeServiceAgent(oneExchange);
 
         expect(() => jsonExchangeServiceHandler.validate()).toThrow();
         jsonExchangeServiceHandler.registerHandle(oneExchange.onlyOne, async () => { });
@@ -35,7 +35,7 @@ describe('service', () => {
     });
 
     test('validate works for few exchanges', () => {
-        const jsonExchangeServiceHandler = new JsonExchangeServiceHandler(fewExchanges);
+        const jsonExchangeServiceHandler = new JsonExchangeServiceAgent(fewExchanges);
         jsonExchangeServiceHandler.registerHandle(fewExchanges.test, async () => { });
         jsonExchangeServiceHandler.registerHandle(fewExchanges.testNested.d, async () => { });
 
@@ -45,7 +45,7 @@ describe('service', () => {
     });
 
     test('double registering an exchange handle should throw', () => {
-        const jsonExchangeServiceHandler = new JsonExchangeServiceHandler(oneExchange);
+        const jsonExchangeServiceHandler = new JsonExchangeServiceAgent(oneExchange);
         jsonExchangeServiceHandler.registerHandle(oneExchange.onlyOne, async () => { });
 
         expect(() => jsonExchangeServiceHandler.registerHandle(oneExchange.onlyOne, async () => { })).toThrow();
