@@ -2,10 +2,10 @@
 ## The problem
 Having any API seems in a usual case a heavy load for developers to maintain it, in worse cases it is so bad that developers are afraid to refactor it, or change it. Usually it has heavy testing on both side of the communication, still not eliminating all bugs and temporal time-downs. Seeing the problems during years of professional experiance, seeing lots of money burned because of it, bring to me many ideas how to fix it, this is implemenation of one of those ideas. 
 
-##Idea
+## Idea
 The idea is to have a common code base for both sides of API communications. It is impossible to have it in any case, but for many cases it could be possible.
 
-##What is should solve
+## What is should solve
 - expensive API changes
 - bugs related to path typos
 - bugs related to DTO out-of-sync or typos in its keys
@@ -15,14 +15,14 @@ The idea is to have a common code base for both sides of API communications. It 
 - HTTP errors code should be not confusing any more (there are many different and contrary opinions when to use what), and the service may return eather a valid response, or an error as string in every case
 - HTTP methods should be not cnfusing any more (there are many different and contrary opinions when to use what), as all the exchanges should use always PUT method
 
-##Limitations
+## Limitations
 - it is only limited to TypeScript so practically it means any modern WEB browser frontend, and some Node backend, or serverless node functions
 - both sides of the communications spruce code have to be in one file-system, to be able to reference to the common code. Usually they are anyway in one repository, and this is perfect
 - it can not solve problems with badly qualified developers, or managers, or micromanagement, or if one of the side of the communication uses other language than typescript
 - it should not be used directly with JS, although it is possible, because then the whole sense is broken, and the typing checks will be anyway useless
 - echanges key names should not contain special characters, in worse case iti would contain '.' that is used to join nested objects
 
-##Intendent use
+## Intendent use
 ```sh
 npm i adrians-typescript-api-standard
 ```
