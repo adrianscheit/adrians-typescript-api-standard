@@ -36,8 +36,8 @@ export class JsonExchangeInMemoryStatistics {
     handleTime = new InMemoryStatistic();
     postProcessorTIme = new InMemoryStatistic();
     responseStringifyingTIme = new InMemoryStatistic();
-    requestSize = new InMemoryStatistic();
-    responseSize = new InMemoryStatistic();
+    requestLength = new InMemoryStatistic();
+    responseLength = new InMemoryStatistic();
     success = new InMemoryStatistic();
 
     getDto() {

@@ -1,4 +1,4 @@
 export { JsonExchange } from './common';
 export { JsonExchangeServiceAgent } from './service';
-export { JsonExchangeCustomerAgent } from './customer';
+export { JsonExchangeCustomerAgent, CustomerAdapterFetch, CustomerAdapterAngularHttpClient } from './customer';
 export { BasicValidation } from './basic-validation';

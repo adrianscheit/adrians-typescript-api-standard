@@ -3,29 +3,31 @@ export type JsonExchangesRoot = { [key: string]: JsonExchangeOrExchanges };
 export class JsonExchange<REQ_DTO, RES_DTO> {
     constructor(
         readonly options: {
+            maxRequestLength?: number,
+            maxResponseLength?: number,
             preProcessor?: (request: REQ_DTO) => void;
             postProcessor?: (response: RES_DTO, request: REQ_DTO) => void;
         } = {}
     ) { }
 
-    static generateCRUDExchanges = <PK, DTO>(preProcessor: (request: DTO) => void | Promise<void>) => ({
+    static generateCUDExchanges = <DTO>(preProcessor: (request: DTO) => void) => ({
         create: new JsonExchange<DTO, DTO>({ preProcessor }),
-        readSome: new JsonExchange<PK[], DTO[]>({
-            postProcessor: (request, response) => {
-                if (request.length !== response.length) {
-                    throw new Error('The response is not containing the requests quantity of data')
-                }
-            }
-        }),
-        readAll: new JsonExchange<void, PK[]>(),
         update: new JsonExchange<DTO, DTO>({ preProcessor }),
-        delete: new JsonExchange<PK, void>(),
+        delete: new JsonExchange<DTO, void>(),
     });
 
-    static generateRecordExchanges = <DTO>(preProcessor: (request: DTO) => void | Promise<void>) => ({
+    static generateCRUDExchanges = <DTO>(preProcessor: (request: DTO) => void) => ({
+        ...this.generateCUDExchanges<DTO>(preProcessor),
+        readAll: new JsonExchange<void, DTO[]>(),
+    });
+
+    static generateRecordExchanges = <DTO>(preProcessor: (request: DTO) => void) => ({
         read: new JsonExchange<void, DTO>(),
         update: new JsonExchange<DTO, DTO>({ preProcessor }),
     });
+
+    static readonly pathPrefix = '/api/json/';
+    static readonly method = 'PUT';
 
     static extractAllExchangesAsEntries(jsonExchangeOrExchanges: JsonExchangeOrExchanges, prefix: string = ''): [string, JsonExchange<any, any>][] {
         if (jsonExchangeOrExchanges instanceof JsonExchange) {
