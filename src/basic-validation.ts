@@ -68,6 +68,38 @@ export class BasicValidation {
         });
     }
 
+    static validateObject(value: unknown,
+        options: {
+            label?: string;
+            requiredKeys?: ReadonlySet<string>;
+            optionalKeys?: ReadonlySet<string>;
+        } = {},
+    ): void {
+        this.addOptionalErrorLabel(options, () => {
+            if (typeof value !== 'object') {
+                throw new Error(`this is not an object`);
+            }
+            if (Array.isArray(value)) {
+                throw new Error(`its an array`);
+            }
+            const keys = new Set<string>(Object.keys(value!));
+            if (options.requiredKeys !== undefined) {
+                for (const key of options.requiredKeys) {
+                    if (!keys.has(key)) {
+                        throw new Error(`it does not contains required key ${key}`);
+                    }
+                }
+            }
+            if (options.optionalKeys !== undefined) {
+                for (const key of keys) {
+                    if (!options.requiredKeys?.has(key) && !options.optionalKeys.has(key)) {
+                        throw new Error(`it contains keys that should not be there ${key}`);
+                    }
+                }
+            }
+        });
+    }
+
     static addOptionalErrorLabel(options: { label?: string }, coveredIfLabel: () => void): void {
         if (options.label) {
             try {
