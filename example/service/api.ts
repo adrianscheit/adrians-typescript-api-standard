@@ -1,7 +1,7 @@
 import { JsonExchangeServiceAgent } from "../../src/service";
 import { apiExchanges, CustomerContext, Item, SubItem } from "../common/api";
 
-const jsonExchangeServiceAgent = new JsonExchangeServiceAgent<CustomerContext>(apiExchanges);
+export const jsonExchangeServiceAgent = new JsonExchangeServiceAgent<CustomerContext>(apiExchanges);
 const mockItemTable: Item[] = [];
 const mockSubItemTable: SubItem[] = [];
 
@@ -75,6 +75,7 @@ jsonExchangeServiceAgent.registerHandle(apiExchanges.subItem.delete, async (requ
 });
 
 jsonExchangeServiceAgent.registerHandle(apiExchanges.getCustomerContext, jsonExchangeServiceAgent.getCustomerContextEndpointHandle);
+
 jsonExchangeServiceAgent.registerHandle(apiExchanges.getStats, jsonExchangeServiceAgent.getStatsEndpointHandle);
 
 jsonExchangeServiceAgent.validate();

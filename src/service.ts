@@ -58,8 +58,8 @@ export class JsonExchangeServiceAgent<CustomerContext> {
         }
     }
 
-    getKeyIfMatch(incomingMessage: { method: string, url: string }): string {
-        if (incomingMessage.method === this.method && incomingMessage.url.startsWith(this.urlPrefix)) {
+    getKeyIfMatch(incomingMessage: { method?: string, url?: string }): string {
+        if (incomingMessage.method === this.method && incomingMessage.url?.startsWith(this.urlPrefix)) {
             return decodeURIComponent(incomingMessage.url.substring(this.urlPrefix.length));
         }
         return '';
