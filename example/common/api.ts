@@ -14,6 +14,10 @@ export interface Item extends Partial<ItemPK> {
 }
 
 export const itemValidation = (item: Item): void => {
+    BasicValidation.validateObject(item, {
+        requiredKeys: new Set(['name', 'description']),
+        optionalKeys: new Set(['createdBy', 'modifiedBy', 'id']),
+    });
     BasicValidation.validateString(item.name, { minLength: 2, maxLength: 64 });
     BasicValidation.validateString(item.description, { minLength: 0, maxLength: 256 });
 };
@@ -32,6 +36,10 @@ export interface CustomerContext {
 }
 
 export const subItemValidation = (subItem: SubItem): void => {
+    BasicValidation.validateObject(subItem, {
+        requiredKeys: new Set(['name', 'description', 'itemId']),
+        optionalKeys: new Set(['createdBy', 'modifiedBy', 'id']),
+    });
     BasicValidation.validateString(subItem.name, { minLength: 2, maxLength: 64 });
     BasicValidation.validateString(subItem.description, { minLength: 0, maxLength: 256 });
     BasicValidation.validateNumber(subItem.itemId);

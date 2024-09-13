@@ -92,14 +92,14 @@ describe('basic-validation', () => {
             [] as any as Object,
             '' as any as Object,
             0 as any as Object,
-        ])('should throw: %s', (invalid: Object) => {
+        ])('should throw: %s', (invalid: any) => {
             expect(() => BasicValidation.validateObject(invalid, { requiredKeys: new Set(['id', 'name']), optionalKeys: new Set(['description']) })).toThrow();
         });
 
         it.each([
             { id: 123, name: 'Name' },
             { id: 123, name: 'Name', description: 'des' },
-        ])('should NOT throw: %s', (valid: Object) => {
+        ])('should NOT throw: %s', (valid: any) => {
             BasicValidation.validateObject(valid, { requiredKeys: new Set(['id', 'name']), optionalKeys: new Set(['description']) })
         });
     });

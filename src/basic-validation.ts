@@ -68,11 +68,11 @@ export class BasicValidation {
         });
     }
 
-    static validateObject(value: unknown,
+    static validateObject<T>(value: T,
         options: {
             label?: string;
-            requiredKeys?: ReadonlySet<string>;
-            optionalKeys?: ReadonlySet<string>;
+            requiredKeys?: ReadonlySet<keyof T>;
+            optionalKeys?: ReadonlySet<keyof T>;
         } = {},
     ): void {
         this.addOptionalErrorLabel(options, () => {
@@ -82,18 +82,18 @@ export class BasicValidation {
             if (Array.isArray(value)) {
                 throw new Error(`its an array`);
             }
-            const keys = new Set<string>(Object.keys(value!));
+            const keys = new Set<keyof T>(Object.keys(value!) as any[]);
             if (options.requiredKeys !== undefined) {
                 for (const key of options.requiredKeys) {
                     if (!keys.has(key)) {
-                        throw new Error(`it does not contains required key ${key}`);
+                        throw new Error(`it does not contains required key ${String(key)}`);
                     }
                 }
             }
             if (options.optionalKeys !== undefined) {
                 for (const key of keys) {
                     if (!options.requiredKeys?.has(key) && !options.optionalKeys.has(key)) {
-                        throw new Error(`it contains keys that should not be there ${key}`);
+                        throw new Error(`it contains keys that should not be there ${String(key)}`);
                     }
                 }
             }
