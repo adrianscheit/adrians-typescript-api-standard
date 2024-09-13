@@ -11,7 +11,11 @@ export class JsonExchangeServiceAgent<CustomerContext> {
     readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
     readonly keyMappings: Map<string, KeyMapping<CustomerContext>> = new Map<string, KeyMapping<CustomerContext>>();
 
-    constructor(jsonExchanges: JsonExchangesRoot) {
+    constructor(
+        jsonExchanges: JsonExchangesRoot,
+        readonly urlPrefix: string = JsonExchange.defaultPathPrefix,
+        readonly method: string = JsonExchange.defaultMethod,
+    ) {
         const entities = JsonExchange.extractAllExchangesAsEntries(jsonExchanges);
         this.keyToJsonExchange = new Map<string, JsonExchange<any, any>>(entities);
         this.jsonExchangeToKey = new Map<JsonExchange<any, any>, string>(entities.map(([a, b]) => [b, a]));
@@ -36,22 +40,18 @@ export class JsonExchangeServiceAgent<CustomerContext> {
         }
     }
 
-    async handleRequest(key: string, unparsedRequest: string, customerContext: CustomerContext): Promise<string> {
+    async handleRequest(key: string, request: any, customerContext: CustomerContext): Promise<any> {
         const keyMapping = this.keyMappings.get(key);
         if (!keyMapping) {
             throw `Exchange key "${key}" not found!`;
         }
         try {
             const jsonExchange = this.keyToJsonExchange.get(key)!;
-            keyMapping.statistic.requestLength.report(unparsedRequest.length);
-            const parsedRequest = await JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.requestParsingTime, async () => JSON.parse(unparsedRequest));
-            JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.preProcessorTime, async () => jsonExchange.options.preProcessor?.(parsedRequest));
-            const response = await JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.handleTime, async () => keyMapping.handle(parsedRequest, customerContext, key));
-            JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.postProcessorTIme, async () => jsonExchange.options.postProcessor?.(response, parsedRequest));
-            const stringifiedResponse = await JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.responseStringifyingTIme, async () => JSON.stringify(response));
-            keyMapping.statistic.responseLength.report(stringifiedResponse.length);
+            JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.preProcessorTime, async () => jsonExchange.options.preProcessor?.(request));
+            const response = await JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.handleTime, async () => keyMapping.handle(request, customerContext, key));
+            JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.postProcessorTIme, async () => jsonExchange.options.postProcessor?.(response, request));
             keyMapping.statistic.success.report(1);
-            return stringifiedResponse;
+            return response;
         } catch (err) {
             keyMapping.statistic.success.report(0);
             throw err;
@@ -59,8 +59,8 @@ export class JsonExchangeServiceAgent<CustomerContext> {
     }
 
     getKeyIfMatch(incomingMessage: { method: string, url: string }): string {
-        if (incomingMessage.method === JsonExchange.method && incomingMessage.url.startsWith(JsonExchange.pathPrefix)) {
-            return decodeURIComponent(incomingMessage.url.substring(JsonExchange.pathPrefix.length));
+        if (incomingMessage.method === this.method && incomingMessage.url.startsWith(this.urlPrefix)) {
+            return decodeURIComponent(incomingMessage.url.substring(this.urlPrefix.length));
         }
         return '';
     }

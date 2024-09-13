@@ -41,7 +41,7 @@ export const apiExchanges = {
     item: JsonExchange.generateCRUDExchanges<Item>(itemValidation),
     subItem: {
         ...JsonExchange.generateCUDExchanges<SubItem>(itemValidation),
-        getByItem: new JsonExchange<ItemPK, SubItem[]>(),
+        readByItem: new JsonExchange<ItemPK, SubItem[]>(),
     },
     getCustomerContext: new JsonExchange<void, CustomerContext>(),
     getStats: new JsonExchange<void, { [key: string]: JsonExchangeInMemoryStatistics }>(),

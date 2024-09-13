@@ -22,8 +22,8 @@ describe('service', () => {
             return 5678;
         });
 
-        const response = await jsonExchangeServiceHandler.handleRequest('testNested.c', '1234', { user: 'mock' });
-        expect(response).toBe('5678');
+        const response = await jsonExchangeServiceHandler.handleRequest('testNested.c', 1234, { user: 'mock' });
+        expect(response).toBe(5678);
     });
 
     test('validate works for one simple exchange', () => {

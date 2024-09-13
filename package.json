@@ -11,7 +11,7 @@
   "scripts": {
     "test": "jest",
     "build": "tsup",
-    "publish": "npm update && npm test && npm run build && git add --all && git commit -m 'npm publish' && npm version patch && git --amend --no-edit && git push && npm publish"
+    "p": "npm update && npm test && npm run build && git add --all && git commit --amend --no-edit && npm version patch && git commit --amend --no-edit && git push && npm publish"
   },
   "repository": {
     "type": "git",

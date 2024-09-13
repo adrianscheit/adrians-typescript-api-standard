@@ -3,8 +3,6 @@ export type JsonExchangesRoot = { [key: string]: JsonExchangeOrExchanges };
 export class JsonExchange<REQ_DTO, RES_DTO> {
     constructor(
         readonly options: {
-            maxRequestLength?: number,
-            maxResponseLength?: number,
             preProcessor?: (request: REQ_DTO) => void;
             postProcessor?: (response: RES_DTO, request: REQ_DTO) => void;
         } = {}
@@ -26,8 +24,8 @@ export class JsonExchange<REQ_DTO, RES_DTO> {
         update: new JsonExchange<DTO, DTO>({ preProcessor }),
     });
 
-    static readonly pathPrefix = '/api/json/';
-    static readonly method = 'PUT';
+    static readonly defaultPathPrefix = '/api/json/';
+    static readonly defaultMethod = 'PUT';
 
     static extractAllExchangesAsEntries(jsonExchangeOrExchanges: JsonExchangeOrExchanges, prefix: string = ''): [string, JsonExchange<any, any>][] {
         if (jsonExchangeOrExchanges instanceof JsonExchange) {
