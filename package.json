@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adrianscheit/json-api.git"
+    "url": "git+https://github.com/adrianscheit/adrians-typescript-api-standard.git"
   },
   "keywords": [
     "node",
@@ -28,9 +28,9 @@
   "author": "Adrian Scheit",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/adrianscheit/json-api/issues"
+    "url": "https://github.com/adrianscheit/adrians-typescript-api-standard/issues"
   },
-  "homepage": "https://github.com/adrianscheit/json-api#readme",
+  "homepage": "https://github.com/adrianscheit/adrians-typescript-api-standard#readme",
   "devDependencies": {
     "@types/jest": "29",
     "jest": "29",
