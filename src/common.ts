@@ -1,4 +1,4 @@
-export type JsonExchangeOrExchanges = JsonExchange<any, any> | { [key: string]: JsonExchangeOrExchanges };
+export type JsonExchangeOrExchanges = JsonExchange<any, any> | JsonExchangesRoot;
 export type JsonExchangesRoot = { [key: string]: JsonExchangeOrExchanges };
 export class JsonExchange<REQ_DTO, RES_DTO> {
     constructor(
@@ -27,10 +27,14 @@ export class JsonExchange<REQ_DTO, RES_DTO> {
     static readonly defaultPathPrefix = '/api/json/';
     static readonly defaultMethod = 'PUT';
 
-    static extractAllExchangesAsEntries(jsonExchangeOrExchanges: JsonExchangeOrExchanges, prefix: string = ''): [string, JsonExchange<any, any>][] {
+    static extractAllExchangesAsEntries(jsonExchangesRoot: JsonExchangesRoot): [string, JsonExchange<any, any>][] {
+        return this._extractAllExchangesAsEntries(jsonExchangesRoot);
+    }
+
+    static _extractAllExchangesAsEntries(jsonExchangeOrExchanges: JsonExchangeOrExchanges, prefix: string = ''): [string, JsonExchange<any, any>][] {
         if (jsonExchangeOrExchanges instanceof JsonExchange) {
             return [[prefix, jsonExchangeOrExchanges]];
         }
-        return Object.entries(jsonExchangeOrExchanges).flatMap(([key, child]) => this.extractAllExchangesAsEntries(child, `${prefix ? prefix + '.' : ''}${key}`));
+        return Object.entries(jsonExchangeOrExchanges).flatMap(([key, child]) => this._extractAllExchangesAsEntries(child, `${prefix ? prefix + '.' : ''}${key}`));
     }
 }

@@ -1,4 +1,4 @@
 import { JsonExchangeCustomerAgent } from "../../src/customer";
 import { apiExchanges } from "../common/api";
 
-const jsonExchangeCustomerFetchHandler = new JsonExchangeCustomerAgent(apiExchanges);
+const jsonExchangeCustomerAgent = new JsonExchangeCustomerAgent(apiExchanges);
