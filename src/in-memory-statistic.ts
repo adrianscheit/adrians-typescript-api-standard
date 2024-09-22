@@ -1,32 +1,50 @@
-export class InMemoryStatistic {
-    private quantity = 0;
-    private sum = 0;
-    private min = NaN;
-    private max = NaN;
+export interface InMemInMemoryStatisticDTO {
+    quantity: number;
+    sum: number;
+    min: number;
+    max: number;
+}
+
+export class InMemoryStatistic implements InMemInMemoryStatisticDTO {
+    quantity = 0;
+    sum = 0;
+    min = NaN;
+    max = NaN;
+
+    constructor(...source: InMemInMemoryStatisticDTO[]) {
+        for (const item of source) {
+            this.quantity += item.quantity;
+            this.sum += item.sum;
+            this.calcMin(item.min!);
+            this.calcMax(item.max!);
+        }
+    }
 
     report(value: number): void {
-        if (this.quantity === 0) {
-            this.max = this.min = value;
-        } else {
-            if (value > this.max!) {
-                this.max = value;
-            } else if (value < this.min!) {
-                this.min = value;
-            }
-        }
-        this.sum += value;
         ++this.quantity;
+        this.sum += value;
+        this.calcMin(value);
+        this.calcMax(value);
     }
 
     calcAvg(): number {
-        if (this.quantity === 0) {
-            return NaN;
-        }
         return this.sum / this.quantity;
     }
 
-    getDto() {
+    getDtoWithAvg(): InMemInMemoryStatisticDTO {
         return { ...this, avg: this.calcAvg() };
+    }
+
+    private calcMin(value: number): void {
+        if (isNaN(this.min) || !isNaN(value) && value < this.min!) {
+            this.min = value;
+        }
+    }
+
+    private calcMax(value: number): void {
+        if (isNaN(this.max) || !isNaN(value) && value > this.max) {
+            this.max = value;
+        }
     }
 }
 
@@ -35,11 +53,4 @@ export class JsonExchangeInMemoryStatistics {
     handleTime = new InMemoryStatistic();
     postProcessorTIme = new InMemoryStatistic();
     success = new InMemoryStatistic();
-
-    getDto() {
-        return Object.fromEntries(Object.entries(this)
-            .filter(([_, value]) => value instanceof InMemoryStatistic)
-            .map(([_, stat]) => stat.getDto())
-        );
-    }
 }

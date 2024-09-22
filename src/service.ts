@@ -11,6 +11,16 @@ export class JsonExchangeServiceAgent<CustomerContext> {
     readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
     readonly keyMappings: Map<string, KeyMapping<CustomerContext>> = new Map<string, KeyMapping<CustomerContext>>();
 
+    readonly handlesPreset: { [key: string]: JsonExchangeServiceHandle<CustomerContext, any, any> } = {
+        getCustomerContext: async (_, customerContext) => customerContext,
+        getStats: async () => Object.fromEntries([...this.keyMappings].map(([key, keyMapping]) => [key, keyMapping.statistic])),
+        getAndResetStats: async () => {
+            const response = await this.handlesPreset.getStats(undefined, undefined as any, undefined as any);
+            this.keyMappings.forEach((mapping) => mapping.statistic = new JsonExchangeInMemoryStatistics());
+            return response;
+        },
+    };
+
     constructor(
         jsonExchanges: JsonExchangesRoot,
         readonly urlPrefix: string = JsonExchange.defaultPathPrefix,
@@ -64,11 +74,6 @@ export class JsonExchangeServiceAgent<CustomerContext> {
         }
         return '';
     }
-
-    getCustomerContextEndpointHandle: JsonExchangeServiceHandle<CustomerContext, void, CustomerContext> =
-        async (_, customerContext) => customerContext;
-    getStatsEndpointHandle: JsonExchangeServiceHandle<CustomerContext, void, { [key: string]: any }> =
-        async () => Object.fromEntries([...this.keyMappings].map(([key, keyMapping]) => [key, keyMapping.statistic.getDto()]));
 
     static async timeMeasure<RET>(statistic: InMemoryStatistic, toMeasure: () => Promise<RET>): Promise<RET> {
         const startTime = this.getCurrentTime();
