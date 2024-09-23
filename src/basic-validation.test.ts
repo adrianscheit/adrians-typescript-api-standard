@@ -6,6 +6,9 @@ describe('basic-validation', () => {
             undefined as any as string,
             null as any as string,
             4 as any as string,
+            {} as any as string,
+            { AAA: 'AAA' } as any as string,
+            [] as any as string,
             '',
             'A',
             'AB',
@@ -16,6 +19,17 @@ describe('basic-validation', () => {
             'ABC)',
             'ABCDEFGH',
             'ABCDEFGHI',
+            '123',
+            '1234',
+            'ABC4',
+            '1BCD',
+            'A2CD',
+            'AB3D',
+            ' ABC',
+            'ABC ',
+            'A BC',
+            'AB C',
+            'A C',
         ])('should throw: %s', (invalid: string) => {
             expect(() => BasicValidation.validateString(invalid, { minLength: 3, maxLength: 7, regExp: /^[A-Z]*$/ })).toThrow();
         });

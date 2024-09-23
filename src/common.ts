@@ -23,8 +23,9 @@ export class JsonExchange<REQ_DTO, RES_DTO> {
         update: new JsonExchange<DTO, DTO>({ preProcessor }),
     });
 
-    static readonly defaultPathPrefix = '/api/json/';
-    static readonly defaultMethod = 'PUT';
+    static readonly defaultPathPrefix = '/api/json/' as const;
+    static readonly defaultMethod = 'PUT' as const;
+    static readonly keysSeparator = '.' as const;
 
     static extractAllExchangesAsEntries(jsonExchangesRoot: JsonExchangesRoot): [string, JsonExchange<any, any>][] {
         return this._extractAllExchangesAsEntries(jsonExchangesRoot);
@@ -34,6 +35,6 @@ export class JsonExchange<REQ_DTO, RES_DTO> {
         if (jsonExchangeOrExchanges instanceof JsonExchange) {
             return [[prefix, jsonExchangeOrExchanges]];
         }
-        return Object.entries(jsonExchangeOrExchanges).flatMap(([key, child]) => this._extractAllExchangesAsEntries(child, `${prefix ? prefix + '.' : ''}${key}`));
+        return Object.entries(jsonExchangeOrExchanges).flatMap(([key, child]) => this._extractAllExchangesAsEntries(child, `${prefix ? prefix + this.keysSeparator : ''}${key}`));
     }
 }

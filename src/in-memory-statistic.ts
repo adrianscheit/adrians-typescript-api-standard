@@ -72,4 +72,32 @@ export class JsonExchangeInMemoryStatistics implements JsonExchangeInMemoryStati
             this[key].add(source[key]);
         }
     }
+
+    reset(): void {
+        for (const key of JsonExchangeInMemoryStatisticsKeys) {
+            this[key] = new InMemoryStatistic();
+        }
+    }
+}
+
+export class ServiceAgentStat {
+    readonly stats: { [key: string]: JsonExchangeInMemoryStatistics } = {};
+
+    constructor(readonly keys: string[]) {
+        for (const key of keys) {
+            this.stats[key] = new JsonExchangeInMemoryStatistics();
+        }
+    }
+
+    add(): void {
+        for (const key of this.keys) {
+            this.stats[key].reset();
+        }
+    }
+
+    reset(): void {
+        for (const key of this.keys) {
+            this.stats[key].reset();
+        }
+    }
 }
