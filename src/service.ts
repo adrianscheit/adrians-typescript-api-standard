@@ -57,13 +57,20 @@ export class JsonExchangeServiceAgent<CustomerContext> {
         }
         try {
             const jsonExchange = this.keyToJsonExchange.get(key)!;
-            JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.preProcessorTime, async () => jsonExchange.options.preProcessor?.(request));
-            const response = await JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.handleTime, async () => keyMapping.handle(request, customerContext, key));
-            JsonExchangeServiceAgent.timeMeasure(keyMapping.statistic.postProcessorTIme, async () => jsonExchange.options.postProcessor?.(response, request));
-            keyMapping.statistic.success.report(1);
+            if (jsonExchange.options.preProcessor) {
+                await JsonExchangeServiceAgent.timeMeasure(
+                    keyMapping.statistic.preProcessorTime,
+                    async () => jsonExchange.options.preProcessor!(request),
+                );
+            }
+            const response = await JsonExchangeServiceAgent.timeMeasure(
+                keyMapping.statistic.handleTime,
+                async () => keyMapping.handle(request, customerContext, key),
+            );
+            keyMapping.statistic.successRate.report(1);
             return response;
         } catch (err) {
-            keyMapping.statistic.success.report(0);
+            keyMapping.statistic.successRate.report(0);
             throw err;
         }
     }

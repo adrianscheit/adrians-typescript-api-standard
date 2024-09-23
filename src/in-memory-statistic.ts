@@ -13,11 +13,15 @@ export class InMemoryStatistic implements InMemInMemoryStatisticDTO {
 
     constructor(...source: InMemInMemoryStatisticDTO[]) {
         for (const item of source) {
-            this.quantity += item.quantity;
-            this.sum += item.sum;
-            this.calcMin(item.min!);
-            this.calcMax(item.max!);
+            this.add(item);
         }
+    }
+
+    add(source: InMemInMemoryStatisticDTO): void {
+        this.quantity += source.quantity;
+        this.sum += source.sum;
+        this.calcMin(source.min!);
+        this.calcMax(source.max!);
     }
 
     report(value: number): void {
@@ -36,21 +40,36 @@ export class InMemoryStatistic implements InMemInMemoryStatisticDTO {
     }
 
     private calcMin(value: number): void {
-        if (isNaN(this.min) || !isNaN(value) && value < this.min!) {
+        if (isNaN(this.min) || value < this.min!) {
             this.min = value;
         }
     }
 
     private calcMax(value: number): void {
-        if (isNaN(this.max) || !isNaN(value) && value > this.max) {
+        if (isNaN(this.max) || value > this.max) {
             this.max = value;
         }
     }
 }
 
-export class JsonExchangeInMemoryStatistics {
+const JsonExchangeInMemoryStatisticsKeys = ['preProcessorTime', 'handleTime', 'successRate'] as const;
+export type JsonExchangeInMemoryStatisticsInterface = {
+    [Key in typeof JsonExchangeInMemoryStatisticsKeys[number]]: InMemInMemoryStatisticDTO;
+};
+export class JsonExchangeInMemoryStatistics implements JsonExchangeInMemoryStatisticsInterface {
     preProcessorTime = new InMemoryStatistic();
     handleTime = new InMemoryStatistic();
-    postProcessorTIme = new InMemoryStatistic();
-    success = new InMemoryStatistic();
+    successRate = new InMemoryStatistic();
+
+    constructor(...source: JsonExchangeInMemoryStatisticsInterface[]) {
+        for (const item of source) {
+            this.add(item);
+        }
+    }
+
+    add(source: JsonExchangeInMemoryStatisticsInterface): void {
+        for (const key of JsonExchangeInMemoryStatisticsKeys) {
+            this[key].add(source[key]);
+        }
+    }
 }

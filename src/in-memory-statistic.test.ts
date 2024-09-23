@@ -1,4 +1,4 @@
-import { InMemoryStatistic } from "./in-memory-statistic";
+import { InMemoryStatistic, JsonExchangeInMemoryStatistics } from "./in-memory-statistic";
 
 describe('in-memory-statistic', () => {
     test('edge case: no data reported', () => {
@@ -46,6 +46,42 @@ describe('in-memory-statistic', () => {
             min: 1,
             max: 5,
             avg: 3,
+        });
+    });
+});
+
+describe('JsonExchangeInMemoryStatistics', () => {
+    test('constuctor', () => {
+        const source1 = new JsonExchangeInMemoryStatistics();
+        source1.handleTime.report(1);
+        source1.preProcessorTime.report(3);
+        source1.successRate.report(1);
+        const source2 = new JsonExchangeInMemoryStatistics();
+        source2.handleTime.report(3);
+        source2.preProcessorTime.report(5);
+        source2.successRate.report(0);
+        const stat = new JsonExchangeInMemoryStatistics(source1, source2);
+
+        expect(stat.handleTime.getDtoWithAvg()).toEqual({
+            quantity: 2,
+            sum: 4,
+            min: 1,
+            max: 3,
+            avg: 2,
+        });
+        expect(stat.preProcessorTime.getDtoWithAvg()).toEqual({
+            quantity: 2,
+            sum: 8,
+            min: 3,
+            max: 5,
+            avg: 4,
+        });
+        expect(stat.successRate.getDtoWithAvg()).toEqual({
+            quantity: 2,
+            sum: 1,
+            min: 0,
+            max: 1,
+            avg: 0.5,
         });
     });
 });

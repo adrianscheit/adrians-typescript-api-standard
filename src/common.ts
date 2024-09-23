@@ -4,7 +4,6 @@ export class JsonExchange<REQ_DTO, RES_DTO> {
     constructor(
         readonly options: {
             preProcessor?: (request: REQ_DTO) => void;
-            postProcessor?: (response: RES_DTO, request: REQ_DTO) => void;
         } = {}
     ) { }
 
