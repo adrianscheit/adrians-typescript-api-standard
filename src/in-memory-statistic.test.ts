@@ -4,17 +4,18 @@ describe('in-memory-statistic', () => {
     test('edge case: no data reported', () => {
         const stat = new InMemoryStatistic();
 
-        const dto = JSON.parse(JSON.stringify(stat.getDtoWithAvg()));
         expect(stat.min).toBe(NaN);
-        expect(dto.min).toBe(null);
         expect(stat.max).toBe(NaN);
-        expect(dto.max).toBe(null);
         expect(stat.calcAvg()).toBe(NaN);
-        expect(dto.avg).toBe(null);
         expect(stat.quantity).toBe(0);
-        expect(dto.quantity).toBe(0);
         expect(stat.sum).toBe(0);
-        expect(dto.sum).toBe(0);
+        expect(stat.getDtoWithAvg()).toEqual({
+            quantity: 0,
+            sum: 0,
+            min: NaN,
+            max: NaN,
+            avg: NaN,
+        });
     });
 
     test('calculates for simple example', () => {
@@ -28,6 +29,50 @@ describe('in-memory-statistic', () => {
         expect(dto.max).toBe(8);
         expect(dto.avg).toBe(5);
         expect(dto.quantity).toBe(3);
+    });
+
+    test('add does not crash when everything is empty', () => {
+        const stat = new InMemoryStatistic();
+        stat.add(new InMemoryStatistic());
+
+        expect(stat.getDtoWithAvg()).toEqual({
+            quantity: 0,
+            sum: 0,
+            min: NaN,
+            max: NaN,
+            avg: NaN,
+        });
+    });
+
+    test('add works if destination is empty', () => {
+        const stat1 = new InMemoryStatistic();
+        stat1.report(1);
+        stat1.report(3);
+        const stat2 = new InMemoryStatistic();
+        stat2.add(stat1);
+
+        expect(stat2.getDtoWithAvg()).toEqual({
+            quantity: 2,
+            sum: 4,
+            min: 1,
+            max: 3,
+            avg: 2,
+        });
+    });
+
+    test('add works if source is empty', () => {
+        const stat = new InMemoryStatistic();
+        stat.report(1);
+        stat.report(3);
+        stat.add(new InMemoryStatistic());
+
+        expect(stat.getDtoWithAvg()).toEqual({
+            quantity: 2,
+            sum: 4,
+            min: 1,
+            max: 3,
+            avg: 2,
+        });
     });
 
     test('construct from many sources', () => {
