@@ -1,4 +1,4 @@
-import { InMemoryStatistic, JsonExchangeInMemoryStatistics, ServiceAgentStat } from "./in-memory-statistic";
+import {InMemoryStatistic, JsonExchangeInMemoryStatistics, ServiceAgentStat} from "./in-memory-statistic";
 
 const emptyDtoResult = {
     quantity: 0,
@@ -245,5 +245,70 @@ describe('ServiceAgentStat', () => {
         expect(stat.handleTime.getDtoWithAvg()).toEqual(emptyDtoResult);
         expect(stat.preProcessorTime.getDtoWithAvg()).toEqual(emptyDtoResult);
         expect(stat.successRate.getDtoWithAvg()).toEqual(emptyDtoResult);
+    });
+
+    describe('aggregates', () => {
+        test('getAllPrefixes trivial', () => {
+            expect(ServiceAgentStat.getAllPrefixes('key1')).toEqual([
+                '*',
+                'key1',
+            ]);
+        });
+
+        test('getAllPrefixes', () => {
+            expect(ServiceAgentStat.getAllPrefixes('obj1.obj2.key1')).toEqual([
+                '*',
+                'obj1.*',
+                'obj1.obj2.*',
+                'obj1.obj2.key1',
+            ]);
+        });
+
+        test('calcAggregates', () => {
+            expect(ServiceAgentStat.calcAggregates({
+                'obj1.key1': {
+                    preProcessorTime: {quantity: 10, sum: 100, min: 5, max: 18},
+                    handleTime: {quantity: 10, sum: 600, min: 32, max: 97},
+                    successRate: {quantity: 10, sum: 9, min: 0, max: 1},
+                },
+                'obj1.key2': {
+                    preProcessorTime: {quantity: 10, sum: 100, min: 5, max: 18},
+                    handleTime: {quantity: 10, sum: 600, min: 32, max: 97},
+                    successRate: {quantity: 10, sum: 9, min: 0, max: 1},
+                },
+                'key3': {
+                    preProcessorTime: {quantity: 10, sum: 100, min: 5, max: 18},
+                    handleTime: {quantity: 10, sum: 600, min: 32, max: 97},
+                    successRate: {quantity: 10, sum: 9, min: 0, max: 1},
+                },
+            })).toEqual([
+                ['*', {
+                    preProcessorTime: {quantity: 30, sum: 300, min: 5, max: 18},
+                    handleTime: {quantity: 30, sum: 1800, min: 32, max: 97},
+                    successRate: {quantity: 30, sum: 27, min: 0, max: 1},
+                }],
+                ['key3', {
+                    preProcessorTime: {quantity: 10, sum: 100, min: 5, max: 18},
+                    handleTime: {quantity: 10, sum: 600, min: 32, max: 97},
+                    successRate: {quantity: 10, sum: 9, min: 0, max: 1},
+                }],
+                ['obj1.*', {
+                    preProcessorTime: {quantity: 20, sum: 200, min: 5, max: 18},
+                    handleTime: {quantity: 20, sum: 1200, min: 32, max: 97},
+                    successRate: {quantity: 20, sum: 18, min: 0, max: 1},
+                }],
+                ['obj1.key1', {
+                    preProcessorTime: {quantity: 10, sum: 100, min: 5, max: 18},
+                    handleTime: {quantity: 10, sum: 600, min: 32, max: 97},
+                    successRate: {quantity: 10, sum: 9, min: 0, max: 1},
+                }],
+                ['obj1.key2', {
+                    preProcessorTime: {quantity: 10, sum: 100, min: 5, max: 18},
+                    handleTime: {quantity: 10, sum: 600, min: 32, max: 97},
+                    successRate: {quantity: 10, sum: 9, min: 0, max: 1},
+                }],
+            ]);
+        });
+
     });
 });

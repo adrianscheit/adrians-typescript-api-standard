@@ -1,3 +1,5 @@
+import {JsonExchange} from "./common";
+
 export interface InMemInMemoryStatisticDTO {
     quantity: number;
     sum: number;
@@ -36,7 +38,7 @@ export class InMemoryStatistic implements InMemInMemoryStatisticDTO {
     }
 
     getDtoWithAvg(): InMemInMemoryStatisticDTO {
-        return { ...this, avg: this.calcAvg() };
+        return {...this, avg: this.calcAvg()};
     }
 
     private calcMin(value: number): void {
@@ -56,6 +58,7 @@ const JsonExchangeInMemoryStatisticsKeys = ['preProcessorTime', 'handleTime', 's
 export type JsonExchangeInMemoryStatisticsInterface = {
     [Key in typeof JsonExchangeInMemoryStatisticsKeys[number]]: InMemInMemoryStatisticDTO;
 };
+
 export class JsonExchangeInMemoryStatistics implements JsonExchangeInMemoryStatisticsInterface {
     preProcessorTime = new InMemoryStatistic();
     handleTime = new InMemoryStatistic();
@@ -100,4 +103,30 @@ export class ServiceAgentStat {
             this.stats[key].reset();
         }
     }
+
+    static getAllPrefixes(key: string): string[] {
+        const result: string[] = ['*'];
+        for (let i = key.indexOf(JsonExchange.keysSeparator) + 1; i > 0; i = key.indexOf(JsonExchange.keysSeparator, i) + 1) {
+            result.push(`${key.substring(0, i)}*`);
+        }
+        result.push(key);
+        return result;
+    }
+
+    static calcAggregates(
+        source: { [key: string]: JsonExchangeInMemoryStatisticsInterface },
+    ): [string, JsonExchangeInMemoryStatisticsInterface][] {
+        const result = new Map<string, JsonExchangeInMemoryStatistics>();
+        for (const [key, value] of Object.entries(source)) {
+            for (const prefix of this.getAllPrefixes(key)) {
+                if (result.has(prefix)) {
+                    result.get(prefix)!.add(value);
+                } else {
+                    result.set(prefix, new JsonExchangeInMemoryStatistics(value));
+                }
+            }
+        }
+        return [...result].sort((a, b) => a[0].localeCompare(b[0]))
+    }
+
 }
