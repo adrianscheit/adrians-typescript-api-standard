@@ -2,6 +2,7 @@ import {JsonExchange, JsonExchangesRoot} from "./common";
 import {InMemoryStatistic, ServiceAgentStat} from "./in-memory-statistic";
 
 type JsonExchangeServiceHandle<CustomerContext, REQ_DTO, RES_DTO> = (request: REQ_DTO, customerContext: CustomerContext, key: string) => Promise<RES_DTO>;
+
 export class JsonExchangeServiceAgent<CustomerContext> {
     readonly handles: Map<string, JsonExchangeServiceHandle<CustomerContext, any, any>> = new Map<string, JsonExchangeServiceHandle<CustomerContext, any, any>>();
 
@@ -9,8 +10,8 @@ export class JsonExchangeServiceAgent<CustomerContext> {
     readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
     readonly stats: ServiceAgentStat;
 
-    readonly handlesPreset: { [key: string]: JsonExchangeServiceHandle<CustomerContext, any, any> } = {
-        getCustomerContext: async (_, customerContext) => customerContext,
+    readonly handlesPreset = {
+        getCustomerContext: async (_: any, customerContext: CustomerContext) => customerContext,
         getStats: async () => this.stats.stats,
         getAndResetStats: async () => {
             const response = this.stats.stats;
@@ -85,11 +86,11 @@ export class JsonExchangeServiceAgent<CustomerContext> {
     static async timeMeasure<RET>(statistic: InMemoryStatistic, toMeasure: () => Promise<RET>): Promise<RET> {
         const startTime = this.getCurrentTime();
         const result = await toMeasure();
-        statistic.report(Number(this.getCurrentTime() - startTime));
+        statistic.report(this.getCurrentTime() - startTime);
         return result;
     }
 
-    static getCurrentTime(): bigint {
-        return process.hrtime.bigint();
+    static getCurrentTime(): number {
+        return Date.now();
     }
 }

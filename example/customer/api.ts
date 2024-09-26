@@ -1,4 +1,11 @@
-import { JsonExchangeCustomerAgent } from "../../src/customer";
-import { apiExchanges } from "../common/api";
+import {CustomerStrategyInternal, JsonExchangeCustomerAgent} from "../../src/customer";
+import {allJsonExchanges} from "../common/api";
+import {jsonExchangeServiceAgent} from "../service/api";
 
-const jsonExchangeCustomerAgent = new JsonExchangeCustomerAgent(apiExchanges);
+export const jsonExchangeCustomerAgent = new JsonExchangeCustomerAgent(
+    allJsonExchanges,
+    new CustomerStrategyInternal(
+        jsonExchangeServiceAgent,
+        {userName: 'STUB customerContext!'},
+    ),
+);

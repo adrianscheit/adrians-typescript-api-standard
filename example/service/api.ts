@@ -1,11 +1,11 @@
-import { JsonExchangeServiceAgent } from "../../src/service";
-import { apiExchanges, CustomerContext, Item, SubItem } from "../common/api";
+import {JsonExchangeServiceAgent} from "../../src/service";
+import {allJsonExchanges, CustomerContext, Item, SubItem} from "../common/api";
 
-export const jsonExchangeServiceAgent = new JsonExchangeServiceAgent<CustomerContext>(apiExchanges);
+export const jsonExchangeServiceAgent = new JsonExchangeServiceAgent<CustomerContext>(allJsonExchanges);
 const mockItemTable: Item[] = [];
 const mockSubItemTable: SubItem[] = [];
 
-jsonExchangeServiceAgent.registerHandle(apiExchanges.item.create, async (request, customerContext) => {
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.item.create, async (request, customerContext) => {
     const id = (mockItemTable[0]?.id ?? 0) + 1;
     mockItemTable.unshift({
         id,
@@ -16,9 +16,9 @@ jsonExchangeServiceAgent.registerHandle(apiExchanges.item.create, async (request
     return mockItemTable[0];
 });
 
-jsonExchangeServiceAgent.registerHandle(apiExchanges.item.readAll, async () => mockItemTable);
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.item.readAll, async () => mockItemTable);
 
-jsonExchangeServiceAgent.registerHandle(apiExchanges.item.update, async (request, customerContext) => {
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.item.update, async (request, customerContext) => {
     const item = mockItemTable.find((it) => it.id === request.id)!;
     item.name = request.name;
     item.description = request.description;
@@ -26,7 +26,7 @@ jsonExchangeServiceAgent.registerHandle(apiExchanges.item.update, async (request
     return item;
 });
 
-jsonExchangeServiceAgent.registerHandle(apiExchanges.item.delete, async (request, customerContext) => {
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.item.delete, async (request, customerContext) => {
     const itemIndex = mockItemTable.findIndex((it) => it.id === request.id)!;
     const item = mockItemTable[itemIndex];
     if (item.name !== request.name || item.description !== request.description || item.createdBy !== request.createdBy || item.modifiedBy !== request.modifiedBy) {
@@ -35,7 +35,7 @@ jsonExchangeServiceAgent.registerHandle(apiExchanges.item.delete, async (request
     mockItemTable.splice(itemIndex);
 });
 
-jsonExchangeServiceAgent.registerHandle(apiExchanges.subItem.create, async (request, customerContext) => {
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.subItem.create, async (request, customerContext) => {
     const id = (mockSubItemTable[0]?.id ?? 0) + 1;
     mockSubItemTable.unshift({
         id,
@@ -47,12 +47,12 @@ jsonExchangeServiceAgent.registerHandle(apiExchanges.subItem.create, async (requ
     return mockSubItemTable[0];
 });
 
-jsonExchangeServiceAgent.registerHandle(apiExchanges.subItem.readByItem, async (request) =>
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.subItem.readByItem, async (request) =>
     mockSubItemTable
         .filter((subItem) => subItem.itemId === request.id)
 );
 
-jsonExchangeServiceAgent.registerHandle(apiExchanges.subItem.update, async (request, customerContext) => {
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.subItem.update, async (request, customerContext) => {
     const item = mockSubItemTable.find((it) => it.id === request.id)!;
     item.name = request.name;
     item.description = request.description;
@@ -61,7 +61,7 @@ jsonExchangeServiceAgent.registerHandle(apiExchanges.subItem.update, async (requ
     return item;
 });
 
-jsonExchangeServiceAgent.registerHandle(apiExchanges.subItem.delete, async (request, customerContext) => {
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.subItem.delete, async (request, customerContext) => {
     const itemIndex = mockSubItemTable.findIndex((it) => it.id === request.id)!;
     const item = mockSubItemTable[itemIndex];
     if (item.name !== request.name ||
@@ -74,9 +74,9 @@ jsonExchangeServiceAgent.registerHandle(apiExchanges.subItem.delete, async (requ
     mockItemTable.splice(itemIndex);
 });
 
-jsonExchangeServiceAgent.registerHandle(apiExchanges.getCustomerContext, jsonExchangeServiceAgent.getCustomerContextEndpointHandle);
-
-jsonExchangeServiceAgent.registerHandle(apiExchanges.getStats, jsonExchangeServiceAgent.getStatsEndpointHandle);
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.getCustomerContext, jsonExchangeServiceAgent.handlesPreset.getCustomerContext);
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.getStats, jsonExchangeServiceAgent.handlesPreset.getStats);
+jsonExchangeServiceAgent.registerHandle(allJsonExchanges.getAndResetStats, jsonExchangeServiceAgent.handlesPreset.getAndResetStats);
 
 jsonExchangeServiceAgent.validate();
 
