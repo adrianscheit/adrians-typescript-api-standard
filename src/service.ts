@@ -1,22 +1,20 @@
-import { JsonExchange, JsonExchangesRoot } from "./common";
-import { InMemoryStatistic, JsonExchangeInMemoryStatistics } from "./in-memory-statistic";
+import {JsonExchange, JsonExchangesRoot} from "./common";
+import {InMemoryStatistic, ServiceAgentStat} from "./in-memory-statistic";
 
 type JsonExchangeServiceHandle<CustomerContext, REQ_DTO, RES_DTO> = (request: REQ_DTO, customerContext: CustomerContext, key: string) => Promise<RES_DTO>;
-interface KeyMapping<CustomerContext> {
-    handle: JsonExchangeServiceHandle<CustomerContext, any, any>,
-    statistic: JsonExchangeInMemoryStatistics,
-}
 export class JsonExchangeServiceAgent<CustomerContext> {
+    readonly handles: Map<string, JsonExchangeServiceHandle<CustomerContext, any, any>> = new Map<string, JsonExchangeServiceHandle<CustomerContext, any, any>>();
+
     readonly keyToJsonExchange: ReadonlyMap<string, JsonExchange<any, any>>;
     readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
-    readonly keyMappings: Map<string, KeyMapping<CustomerContext>> = new Map<string, KeyMapping<CustomerContext>>();
+    readonly stats: ServiceAgentStat;
 
     readonly handlesPreset: { [key: string]: JsonExchangeServiceHandle<CustomerContext, any, any> } = {
         getCustomerContext: async (_, customerContext) => customerContext,
-        getStats: async () => Object.fromEntries([...this.keyMappings].map(([key, keyMapping]) => [key, keyMapping.statistic])),
+        getStats: async () => this.stats.stats,
         getAndResetStats: async () => {
-            const response = await this.handlesPreset.getStats(undefined, undefined as any, undefined as any);
-            this.keyMappings.forEach((mapping) => mapping.statistic = new JsonExchangeInMemoryStatistics());
+            const response = this.stats.stats;
+            this.stats.reset();
             return response;
         },
     };
@@ -27,8 +25,9 @@ export class JsonExchangeServiceAgent<CustomerContext> {
         readonly method: string = JsonExchange.defaultMethod,
     ) {
         const entities = JsonExchange.extractAllExchangesAsEntries(jsonExchanges);
-        this.keyToJsonExchange = new Map<string, JsonExchange<any, any>>(entities);
-        this.jsonExchangeToKey = new Map<JsonExchange<any, any>, string>(entities.map(([a, b]) => [b, a]));
+        this.keyToJsonExchange = new Map<string, JsonExchange<any, any>>(entities.map(([a, b]) => [b, a]));
+        this.jsonExchangeToKey = new Map<JsonExchange<any, any>, string>(entities);
+        this.stats = new ServiceAgentStat([...this.keyToJsonExchange.keys()]);
     }
 
     registerHandle<REQ_DTO, RES_DTO>(jsonExchange: JsonExchange<REQ_DTO, RES_DTO>, handle: JsonExchangeServiceHandle<CustomerContext, REQ_DTO, RES_DTO>): void {
@@ -36,14 +35,14 @@ export class JsonExchangeServiceAgent<CustomerContext> {
         if (key === undefined) {
             throw new Error(`exchange was not found!`);
         }
-        if (this.keyMappings.has(key)) {
+        if (this.handles.has(key)) {
             throw new Error(`${key} is already registered!`);
         }
-        this.keyMappings.set(key, { handle, statistic: new JsonExchangeInMemoryStatistics() });
+        this.handles.set(key, handle);
     }
 
     validate(): void {
-        const registeredKeys = new Set<string>(this.keyMappings.keys());
+        const registeredKeys = new Set<string>(this.handles.keys());
         const missingKeys = [...this.jsonExchangeToKey.values()].filter((key) => !registeredKeys.has(key))
         if (missingKeys.length) {
             throw new Error(`There are JSON exchanges with out defined handle: ${missingKeys.join()} `);
@@ -51,26 +50,27 @@ export class JsonExchangeServiceAgent<CustomerContext> {
     }
 
     async handleRequest(key: string, request: any, customerContext: CustomerContext): Promise<any> {
-        const keyMapping = this.keyMappings.get(key);
-        if (!keyMapping) {
+        const handle = this.handles.get(key);
+        if (!handle) {
             throw `Exchange key "${key}" not found!`;
         }
+        const stat = this.stats.stats[key];
         try {
             const jsonExchange = this.keyToJsonExchange.get(key)!;
             if (jsonExchange.options.preProcessor) {
                 await JsonExchangeServiceAgent.timeMeasure(
-                    keyMapping.statistic.preProcessorTime,
+                    stat.preProcessorTime,
                     async () => jsonExchange.options.preProcessor!(request),
                 );
             }
             const response = await JsonExchangeServiceAgent.timeMeasure(
-                keyMapping.statistic.handleTime,
-                async () => keyMapping.handle(request, customerContext, key),
+                stat.handleTime,
+                async () => handle(request, customerContext, key),
             );
-            keyMapping.statistic.successRate.report(1);
+            stat.successRate.report(1);
             return response;
         } catch (err) {
-            keyMapping.statistic.successRate.report(0);
+            stat.successRate.report(0);
             throw err;
         }
     }

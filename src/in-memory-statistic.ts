@@ -104,21 +104,24 @@ export class ServiceAgentStat {
         }
     }
 
-    static getAllPrefixes(key: string): string[] {
+    static getAllPrefixes(key: string, includingKey: boolean = true): string[] {
         const result: string[] = ['*'];
         for (let i = key.indexOf(JsonExchange.keysSeparator) + 1; i > 0; i = key.indexOf(JsonExchange.keysSeparator, i) + 1) {
             result.push(`${key.substring(0, i)}*`);
         }
-        result.push(key);
+        if (includingKey) {
+            result.push(key);
+        }
         return result;
     }
 
     static calcAggregates(
         source: { [key: string]: JsonExchangeInMemoryStatisticsInterface },
+        includingKeys: boolean = true,
     ): [string, JsonExchangeInMemoryStatisticsInterface][] {
         const result = new Map<string, JsonExchangeInMemoryStatistics>();
         for (const [key, value] of Object.entries(source)) {
-            for (const prefix of this.getAllPrefixes(key)) {
+            for (const prefix of this.getAllPrefixes(key, includingKeys)) {
                 if (result.has(prefix)) {
                     result.get(prefix)!.add(value);
                 } else {
@@ -126,7 +129,7 @@ export class ServiceAgentStat {
                 }
             }
         }
-        return [...result].sort((a, b) => a[0].localeCompare(b[0]))
+        return [...result].sort(([a], [b]) => a.localeCompare(b))
     }
 
 }
