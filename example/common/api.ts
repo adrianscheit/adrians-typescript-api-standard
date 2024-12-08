@@ -9,8 +9,10 @@ export interface ItemPK {
 export interface Item extends ItemPK {
     name: string;
     description: string;
-    createdBy?: string,
-    modifiedBy?: string,
+    createdBy?: string;
+    modifiedBy?: string;
+    createdTimeStamp?: number;
+    modifiedTimeStamp?: number;
 }
 
 export const itemValidation = (item: Item): void => {
@@ -23,16 +25,18 @@ export const itemValidation = (item: Item): void => {
 };
 
 export interface SubItem {
-    id?: number;
+    id: number;
     name: string;
     description: string;
-    createdBy?: string,
-    modifiedBy?: string,
-    itemId: number,
+    createdBy?: string;
+    modifiedBy?: string;
+    createdTimeStamp?: number;
+    modifiedTimeStamp?: number;
+    itemId: number;
 }
 
 export interface CustomerContext {
-    userName: string,
+    userName: string;
 }
 
 export const subItemValidation = (subItem: SubItem): void => {

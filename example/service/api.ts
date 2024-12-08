@@ -1,5 +1,5 @@
-import {JsonExchangeServiceAgent} from "../../src/service";
-import {allJsonExchanges, CustomerContext, Item, SubItem} from "../common/api";
+import { JsonExchangeServiceAgent } from "../../src/service";
+import { allJsonExchanges, CustomerContext, Item, SubItem } from "../common/api";
 
 export const jsonExchangeServiceAgent = new JsonExchangeServiceAgent<CustomerContext>(allJsonExchanges);
 const mockItemTable: Item[] = [];
@@ -12,6 +12,7 @@ jsonExchangeServiceAgent.registerHandle(allJsonExchanges.item.create, async (req
         name: request.name,
         description: request.description,
         createdBy: customerContext.userName,
+        createdTimeStamp: Date.now(),
     }); // INSERT INTO
     return mockItemTable[0];
 });
@@ -23,6 +24,7 @@ jsonExchangeServiceAgent.registerHandle(allJsonExchanges.item.update, async (req
     item.name = request.name;
     item.description = request.description;
     item.modifiedBy = customerContext.userName;
+    item.modifiedTimeStamp = Date.now();
     return item;
 });
 
@@ -43,6 +45,7 @@ jsonExchangeServiceAgent.registerHandle(allJsonExchanges.subItem.create, async (
         name: request.name,
         description: request.description,
         createdBy: customerContext.userName,
+        createdTimeStamp: Date.now(),
     }); // INSERT INTO
     return mockSubItemTable[0];
 });
@@ -58,6 +61,7 @@ jsonExchangeServiceAgent.registerHandle(allJsonExchanges.subItem.update, async (
     item.description = request.description;
     item.itemId = request.itemId;
     item.modifiedBy = customerContext.userName;
+    item.modifiedTimeStamp = Date.now();
     return item;
 });
 

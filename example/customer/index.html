@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Example customer frontend with build-in service implementation</title>
-        <script src="index.ts"></script>
-    </head>
-    <body>
-        <h1>Menu</h1>
-        <ul>
-            <li id="item">Item</li>
-            <li id="subitem">Sub-item</li>
-        </ul>
-        <h2></h2>
-    </body>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Example customer frontend with build-in service implementation</title>
+    <script src="index.ts"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid;
+        }
+    </style>
+</head>
+
+<body>
+    <article>
+        <h3>Items:</h3>
+        <div id="item-content"></div>
+    </article>
+    <article>
+        <h3>Sub-Items:</h3>
+        <div id="subitem-content"></div>
+    </article>
+</body>
+
 </html>
