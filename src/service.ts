@@ -31,6 +31,17 @@ export class JsonExchangeServiceAgent<CustomerContext> {
         this.stats = new ServiceAgentStat([...this.keyToJsonExchange.keys()]);
     }
 
+    static async timeMeasure<RET>(statistic: InMemoryStatistic, toMeasure: () => Promise<RET>): Promise<RET> {
+        const startTime = this.getCurrentTime();
+        const result = await toMeasure();
+        statistic.report(this.getCurrentTime() - startTime);
+        return result;
+    }
+
+    static getCurrentTime(): number {
+        return Date.now();
+    }
+
     registerHandle<REQ_DTO, RES_DTO>(jsonExchange: JsonExchange<REQ_DTO, RES_DTO>, handle: JsonExchangeServiceHandle<CustomerContext, REQ_DTO, RES_DTO>): void {
         const key = this.jsonExchangeToKey.get(jsonExchange);
         if (key === undefined) {
@@ -81,16 +92,5 @@ export class JsonExchangeServiceAgent<CustomerContext> {
             return decodeURIComponent(incomingMessage.url.substring(this.urlPrefix.length));
         }
         return '';
-    }
-
-    static async timeMeasure<RET>(statistic: InMemoryStatistic, toMeasure: () => Promise<RET>): Promise<RET> {
-        const startTime = this.getCurrentTime();
-        const result = await toMeasure();
-        statistic.report(this.getCurrentTime() - startTime);
-        return result;
-    }
-
-    static getCurrentTime(): number {
-        return Date.now();
     }
 }

@@ -39,6 +39,21 @@ export interface CustomerContext {
     userName: string;
 }
 
+export interface UserData {
+    name: string;
+    email: string;
+    address: string;
+}
+
+export const userDataValidation = (userData: UserData): void => {
+    BasicValidation.validateObject(userData, {
+        requiredKeys: new Set(['name', 'email', 'address']),
+    });
+    BasicValidation.validateString(userData.name, {minLength: 4, maxLength: 64});
+    BasicValidation.validateString(userData.email, {minLength: 0, maxLength: 256});
+    BasicValidation.validateString(userData.address, {minLength: 4, maxLength: 256});
+};
+
 export const subItemValidation = (subItem: SubItem): void => {
     BasicValidation.validateObject(subItem, {
         requiredKeys: new Set<keyof SubItem>(['id', 'name', 'description', 'itemId']),
@@ -55,6 +70,7 @@ export const allJsonExchanges = {
         ...JsonExchange.generateCUDExchanges<SubItem>(subItemValidation),
         readByItem: new JsonExchange<ItemPK, SubItem[]>(),
     },
+    userData: JsonExchange.generateRecordExchanges<UserData>(userDataValidation),
     getCustomerContext: new JsonExchange<void, CustomerContext>(),
     getStats: new JsonExchange<void, { [key: string]: JsonExchangeInMemoryStatisticsInterface }>(),
     getAndResetStats: new JsonExchange<void, { [key: string]: JsonExchangeInMemoryStatisticsInterface }>(),

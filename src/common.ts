@@ -2,6 +2,10 @@ export type JsonExchangeOrExchanges = JsonExchange<any, any> | JsonExchangesRoot
 export type JsonExchangesRoot = { [key: string]: JsonExchangeOrExchanges };
 
 export class JsonExchange<REQ_DTO, RES_DTO> {
+    static readonly defaultPathPrefix = '/api/json/' as const;
+    static readonly defaultMethod = 'PUT' as const;
+    static readonly keysSeparator = '.' as const;
+
     constructor(
         readonly options: {
             preProcessor?: (request: REQ_DTO) => void;
@@ -24,10 +28,6 @@ export class JsonExchange<REQ_DTO, RES_DTO> {
         read: new JsonExchange<void, DTO>(),
         update: new JsonExchange<DTO, DTO>({preProcessor}),
     });
-
-    static readonly defaultPathPrefix = '/api/json/' as const;
-    static readonly defaultMethod = 'PUT' as const;
-    static readonly keysSeparator = '.' as const;
 
     static extractAllExchangesAsEntries(jsonExchangesRoot: JsonExchangesRoot): [JsonExchange<any, any>, string][] {
         return this._extractAllExchangesAsEntries(jsonExchangesRoot);

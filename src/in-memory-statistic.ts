@@ -92,18 +92,6 @@ export class ServiceAgentStat {
         }
     }
 
-    add(): void {
-        for (const key of this.keys) {
-            this.stats[key].reset();
-        }
-    }
-
-    reset(): void {
-        for (const key of this.keys) {
-            this.stats[key].reset();
-        }
-    }
-
     static getAllPrefixes(key: string, includingKey: boolean = true): string[] {
         const result: string[] = ['*'];
         for (let i = key.indexOf(JsonExchange.keysSeparator) + 1; i > 0; i = key.indexOf(JsonExchange.keysSeparator, i) + 1) {
@@ -130,6 +118,18 @@ export class ServiceAgentStat {
             }
         }
         return [...result].sort(([a], [b]) => a.localeCompare(b))
+    }
+
+    add(): void {
+        for (const key of this.keys) {
+            this.stats[key].reset();
+        }
+    }
+
+    reset(): void {
+        for (const key of this.keys) {
+            this.stats[key].reset();
+        }
     }
 
 }

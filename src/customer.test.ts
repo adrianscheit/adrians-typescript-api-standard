@@ -1,6 +1,5 @@
-import { JsonExchange } from "./common";
-import { JsonExchangeCustomerAgent } from "./customer";
-import { JsonExchangeServiceAgent } from "./service";
+import {JsonExchange} from "./common";
+import {JsonExchangeCustomerAgent} from "./customer";
 
 
 describe('JsonExchangeCustomerAgent', () => {
@@ -8,7 +7,7 @@ describe('JsonExchangeCustomerAgent', () => {
         const jsonExchanges = {
             'key/with Characters!': new JsonExchange(),
         };
-        const agent = new JsonExchangeCustomerAgent(jsonExchanges, { exchange: jest.fn() });
+        const agent = new JsonExchangeCustomerAgent(jsonExchanges, {exchange: jest.fn()});
 
         agent.exchange(jsonExchanges['key/with Characters!'], 1234);
         expect(agent.customerAdapter.exchange).toHaveBeenCalledTimes(1);
@@ -16,14 +15,14 @@ describe('JsonExchangeCustomerAgent', () => {
     });
 
     it('exchange with unknown exchange', (done) => {
-        const agent = new JsonExchangeCustomerAgent({}, { exchange: jest.fn() });
+        const agent = new JsonExchangeCustomerAgent({}, {exchange: jest.fn()});
 
         agent.exchange(new JsonExchange(), {}).catch(() => done());
         expect(agent.customerAdapter.exchange).not.toHaveBeenCalled();
     });
 
     it('exchange works', async () => {
-        const jsonExchanges = { test: new JsonExchange<number, number>() };
+        const jsonExchanges = {test: new JsonExchange<number, number>()};
         const agent = new JsonExchangeCustomerAgent(
             jsonExchanges,
             {
@@ -39,7 +38,7 @@ describe('JsonExchangeCustomerAgent', () => {
     });
 
     it('preProcessor fails', (done) => {
-        const jsonExchanges = { test: new JsonExchange() };
+        const jsonExchanges = {test: new JsonExchange()};
         const agent = new JsonExchangeCustomerAgent(
             {
                 test: new JsonExchange({
@@ -48,7 +47,7 @@ describe('JsonExchangeCustomerAgent', () => {
                     }
                 })
             },
-            { exchange: jest.fn() }
+            {exchange: jest.fn()},
         );
 
         agent.exchange(jsonExchanges.test, {}).catch(() => done());

@@ -1,6 +1,6 @@
 export class BasicValidation {
     static validateString(
-        value: string,
+        value: unknown,
         options: {
             label?: string;
             minLength?: number;
@@ -24,7 +24,8 @@ export class BasicValidation {
         });
     }
 
-    static validateNumber(value: number,
+    static validateNumber(
+        value: unknown,
         options: {
             label?: string;
             min?: number;
@@ -48,7 +49,8 @@ export class BasicValidation {
         });
     }
 
-    static validateArray(value: unknown[],
+    static validateArray(
+        value: unknown[],
         options: {
             label?: string;
             minLength?: number;
@@ -68,7 +70,8 @@ export class BasicValidation {
         });
     }
 
-    static validateObject<T>(value: T,
+    static validateObject<T>(
+        value: T,
         options: {
             label?: string;
             requiredKeys?: ReadonlySet<keyof T>;
