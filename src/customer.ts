@@ -7,7 +7,7 @@ export interface CustomerStrategy {
 
 export class CustomerStrategyInternal<CustomerContext> implements CustomerStrategy {
     constructor(
-        readonly jsonExchangeServiceAgent: JsonExchangeServiceAgent<CustomerContext>,
+        private readonly jsonExchangeServiceAgent: JsonExchangeServiceAgent<CustomerContext>,
         public customerContext: CustomerContext,
     ) {
     }
