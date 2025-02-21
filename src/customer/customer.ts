@@ -1,5 +1,5 @@
-import {JsonExchangeServiceAgent} from '../service/service';
-import {JsonExchange, JsonExchangesRoot} from '../json-exchange';
+import {JsonExchangeServiceAgent} from '../service/json-exchange-service-agent';
+import {JsonExchange} from '../json-exchange';
 
 export interface CustomerStrategy {
     exchange<REQ_DTO, RES_DTO>(key: string, body: REQ_DTO): Promise<RES_DTO>;
@@ -95,24 +95,3 @@ export class JsonExchangeHistory implements CustomerStrategy {
     }
 }
 
-export class JsonExchangeCustomerAgent {
-    readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
-
-    constructor(
-        jsonExchanges: JsonExchangesRoot,
-        readonly customerAdapter: CustomerStrategy = new CustomerStrategyFetch(),
-    ) {
-        const entities = JsonExchange.extractAllExchangesAsEntries(jsonExchanges);
-        this.jsonExchangeToKey = new Map<JsonExchange<any, any>, string>(entities);
-
-    }
-
-    async exchange<REQ_DTO, RES_DTO>(jsonExchange: JsonExchange<REQ_DTO, RES_DTO>, request: REQ_DTO): Promise<RES_DTO> {
-        const key = this.jsonExchangeToKey.get(jsonExchange);
-        if (key) {
-            jsonExchange.options.preProcessor?.(request);
-            return await this.customerAdapter.exchange<REQ_DTO, RES_DTO>(key, request);
-        }
-        throw `Exchange not found`;
-    }
-}

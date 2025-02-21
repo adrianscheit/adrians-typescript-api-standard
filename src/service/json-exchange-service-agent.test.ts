@@ -1,4 +1,4 @@
-import {JsonExchangeServiceAgent} from './service';
+import {JsonExchangeServiceAgent} from './json-exchange-service-agent';
 import {JsonExchange} from '../json-exchange';
 
 describe('service', () => {

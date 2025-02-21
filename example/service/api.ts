@@ -1,4 +1,4 @@
-import {JsonExchangeServiceAgent} from '../../src/service/service';
+import {JsonExchangeServiceAgent} from '../../src/service/json-exchange-service-agent';
 import {allJsonExchanges, CustomerContext, Item, SubItem} from '../common/api';
 
 export const jsonExchangeServiceAgent = new JsonExchangeServiceAgent<CustomerContext>(allJsonExchanges);
