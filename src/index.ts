@@ -5,5 +5,5 @@ export {
     CustomerStrategyAngularHttpClient,
     JsonExchangeCustomerAgent,
 } from './customer';
-export {BasicValidation} from './basic-validation';
+export {BasicValidation} from './utils/basic-validation';
 export {JsonExchange} from "./json-exchange";
