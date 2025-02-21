@@ -10,3 +10,4 @@ export {Validation} from './utils/validation';
 export {JsonExchange} from './json-exchange';
 export {CacheSingleton, CacheWithMaxSize} from './utils/cache';
 export {JsonExchangeCustomerAgent} from './customer/json-exchange-customer-agent';
+export {DataTransformation} from './utils/data-transformation';
