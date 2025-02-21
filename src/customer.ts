@@ -64,6 +64,37 @@ export class CustomerStrategyAngularHttpClient implements CustomerStrategy {
     }
 }
 
+interface HistoryEntry {
+    key: string;
+    startTimestamp: number;
+    endTimestamp?: number;
+}
+
+export class JsonExchangeHistory implements CustomerStrategy {
+    readonly pending: Set<HistoryEntry> = new Set<HistoryEntry>();
+    readonly success: Set<HistoryEntry> = new Set<HistoryEntry>();
+    readonly errored: Set<HistoryEntry> = new Set<HistoryEntry>();
+
+    constructor(private readonly customerStrategy: CustomerStrategy) {
+    }
+
+    async exchange<REQ_DTO, RES_DTO>(key: string, body: REQ_DTO): Promise<RES_DTO> {
+        const historyEntry: HistoryEntry = {key, startTimestamp: Date.now()};
+        this.pending.add(historyEntry)
+        try {
+            const result = await this.customerStrategy.exchange<REQ_DTO, RES_DTO>(key, body);
+            this.success.add(historyEntry);
+            return result
+        } catch (e) {
+            this.errored.add(historyEntry);
+            throw e;
+        } finally {
+            this.pending.delete(historyEntry);
+            historyEntry.endTimestamp = Date.now();
+        }
+    }
+}
+
 export class JsonExchangeCustomerAgent {
     readonly jsonExchangeToKey: ReadonlyMap<JsonExchange<any, any>, string>;
 

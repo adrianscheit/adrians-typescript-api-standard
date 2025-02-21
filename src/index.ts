@@ -3,6 +3,7 @@ export {
     CustomerStrategyInternal,
     CustomerStrategyFetch,
     CustomerStrategyAngularHttpClient,
+    JsonExchangeHistory,
     JsonExchangeCustomerAgent,
 } from './customer';
 export {BasicValidation} from './utils/basic-validation';

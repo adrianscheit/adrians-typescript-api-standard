@@ -1,12 +1,12 @@
-export abstract class Cache<T, K> {
-    abstract cache(getValue: (key: K) => Promise<T>, key: K): Promise<T>;
+export interface Cache<T, K> {
+    cache(getValue: (key: K) => Promise<T>, key: K): Promise<T>;
 
-    abstract get(key: K): T | undefined;
+    get(key: K): T | undefined;
 
-    abstract clear(): void;
+    clear(): void;
 }
 
-export class CacheSingleton<T> extends Cache<T, void> {
+export class CacheSingleton<T> implements Cache<T, void> {
     protected memory: T | undefined;
 
     async cache(getValue: () => Promise<T>, _: void,): Promise<T> {
@@ -25,11 +25,10 @@ export class CacheSingleton<T> extends Cache<T, void> {
     }
 }
 
-export class CacheWithMaxSize<T, K> extends Cache<T, K> {
+export class CacheWithMaxSize<T, K> implements Cache<T, K> {
     protected readonly memory: Map<string, T> = new Map<string, T>();
 
     constructor(readonly maxSize?: number) {
-        super();
         if (maxSize && !(maxSize >= 1)) {
             throw new Error('Max size must be at least 1');
         }
