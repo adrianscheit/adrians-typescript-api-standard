@@ -1,4 +1,4 @@
-import {CacheSingleton, CacheWithMaxSize} from "./cache";
+import {CacheSingleton, CacheWithMaxSize} from './cache';
 
 describe('Cache', () => {
     describe('CacheSingleton', () => {

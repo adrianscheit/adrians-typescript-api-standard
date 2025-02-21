@@ -1,4 +1,4 @@
-import {JsonExchange} from "./json-exchange";
+import {JsonExchange} from './json-exchange';
 
 describe('JsonExchange', () => {
     describe('extractAllExchangesAsEntries', () => {

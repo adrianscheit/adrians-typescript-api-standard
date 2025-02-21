@@ -1,5 +1,5 @@
-import { JsonExchangeServiceAgent } from "../../src/service";
-import { allJsonExchanges, CustomerContext, Item, SubItem } from "../common/api";
+import {JsonExchangeServiceAgent} from '../../src/service/service';
+import {allJsonExchanges, CustomerContext, Item, SubItem} from '../common/api';
 
 export const jsonExchangeServiceAgent = new JsonExchangeServiceAgent<CustomerContext>(allJsonExchanges);
 const mockItemTable: Item[] = [];

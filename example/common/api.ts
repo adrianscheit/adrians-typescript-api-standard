@@ -1,6 +1,6 @@
-import {BasicValidation} from "../../src/utils/basic-validation";
-import {JsonExchangeInMemoryStatisticsInterface} from "../../src/in-memory-statistic";
-import {JsonExchange} from "../../src/json-exchange";
+import {BasicValidation} from '../../src/utils/basic-validation';
+import {JsonExchangeInMemoryStatisticsInterface} from '../../src/in-memory-statistic';
+import {JsonExchange} from '../../src/json-exchange';
 
 export interface ItemPK {
     id: number;

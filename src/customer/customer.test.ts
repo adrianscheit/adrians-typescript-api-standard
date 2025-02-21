@@ -1,5 +1,5 @@
-import {CustomerStrategy, JsonExchangeCustomerAgent, JsonExchangeHistory} from "./customer";
-import {JsonExchange} from "./json-exchange";
+import {CustomerStrategy, JsonExchangeCustomerAgent, JsonExchangeHistory} from './customer';
+import {JsonExchange} from '../json-exchange';
 
 describe('JsonExchangeCustomerAgent', () => {
     it('exchange with key with special characters and is reversable by service agent', () => {

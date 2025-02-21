@@ -1,5 +1,5 @@
-import {JsonExchangeServiceAgent} from "./service";
-import {JsonExchange, JsonExchangesRoot} from "./json-exchange";
+import {JsonExchangeServiceAgent} from '../service/service';
+import {JsonExchange, JsonExchangesRoot} from '../json-exchange';
 
 export interface CustomerStrategy {
     exchange<REQ_DTO, RES_DTO>(key: string, body: REQ_DTO): Promise<RES_DTO>;

@@ -1,4 +1,4 @@
-import {InMemoryStatistic, JsonExchangeInMemoryStatistics, ServiceAgentStat} from "./in-memory-statistic";
+import {InMemoryStatistic, JsonExchangeInMemoryStatistics, ServiceAgentStat} from './in-memory-statistic';
 
 const emptyDtoResult = {
     quantity: 0,

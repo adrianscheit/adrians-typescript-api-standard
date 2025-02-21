@@ -1,4 +1,4 @@
-import {BasicValidation} from "./basic-validation";
+import {BasicValidation} from './basic-validation';
 
 describe('basic-validation', () => {
     describe('string', () => {

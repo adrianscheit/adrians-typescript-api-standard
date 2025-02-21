@@ -1,5 +1,5 @@
-import { jsonExchangeCustomerAgent } from "./api";
-import { allJsonExchanges, ItemPK, Item, SubItem } from "../common/api";
+import {jsonExchangeCustomerAgent} from './api';
+import {allJsonExchanges, Item, ItemPK, SubItem} from '../common/api';
 
 const itemContentElement = document.getElementById('item-content');
 const subItemContentElement = document.getElementById('subitem-content');
@@ -61,13 +61,16 @@ const getItems = async () => {
     const response = await jsonExchangeCustomerAgent.exchange(allJsonExchanges.item.readAll, undefined);
     console.log(response);
     const actions: TableAction<Item>[] = [
-        { label: 'Load sub-items', exec: (row) => getSubItems(row) },
+        {label: 'Load sub-items', exec: (row) => getSubItems(row)},
         {
             label: 'Update name', exec: async (row) => {
                 const newValue = window.prompt('New name', row.name);
                 if (newValue != null) {
                     try {
-                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.item.update, { ...row, name: newValue });
+                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.item.update, {
+                            ...row,
+                            name: newValue
+                        });
                         row.name = newValue;
                     } catch (e) {
                         alert('update failed');
@@ -80,7 +83,10 @@ const getItems = async () => {
                 const newValue = window.prompt('New description', row.description);
                 if (newValue != null) {
                     try {
-                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.item.update, { ...row, description: newValue });
+                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.item.update, {
+                            ...row,
+                            description: newValue
+                        });
                         row.description = newValue;
                     } catch (e) {
                         alert('update failed');
@@ -107,7 +113,11 @@ const getItems = async () => {
                 const description = window.prompt('New description');
                 if (description != null) {
                     try {
-                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.item.create, { id: -1, name, description });
+                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.item.create, {
+                            id: -1,
+                            name,
+                            description
+                        });
                         getItems();
                     } catch (e) {
                         alert('add failed');
@@ -128,7 +138,10 @@ const getSubItems = async (itemPk: ItemPK) => {
                 const newValue = window.prompt('New name', row.name);
                 if (newValue != null) {
                     try {
-                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.subItem.update, { ...row, name: newValue });
+                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.subItem.update, {
+                            ...row,
+                            name: newValue
+                        });
                         row.name = newValue;
                     } catch (e) {
                         alert('update failed');
@@ -141,7 +154,10 @@ const getSubItems = async (itemPk: ItemPK) => {
                 const newValue = window.prompt('New description', row.description);
                 if (newValue != null) {
                     try {
-                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.subItem.update, { ...row, description: newValue });
+                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.subItem.update, {
+                            ...row,
+                            description: newValue
+                        });
                         row.description = newValue;
                     } catch (e) {
                         alert('update failed');
@@ -168,7 +184,12 @@ const getSubItems = async (itemPk: ItemPK) => {
                 const description = window.prompt('New description');
                 if (description != null) {
                     try {
-                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.subItem.create, { id: -1, name, description, itemId: itemPk.id });
+                        await jsonExchangeCustomerAgent.exchange(allJsonExchanges.subItem.create, {
+                            id: -1,
+                            name,
+                            description,
+                            itemId: itemPk.id
+                        });
                         getSubItems(itemPk);
                     } catch (e) {
                         alert('add failed');

@@ -1,10 +1,10 @@
-import http from "http";
-import { jsonExchangeServiceAgent } from "./api";
-import { CustomerContext } from "../common/api";
+import http from 'http';
+import {jsonExchangeServiceAgent} from './api';
+import {CustomerContext} from '../common/api';
 
 http.createServer(async (req, res) => {
     console.log(req.method, req.url, req.headers);
-    const customerContext: CustomerContext = { userName: req.headers.authorization! };
+    const customerContext: CustomerContext = {userName: req.headers.authorization!};
     const key = jsonExchangeServiceAgent.getKeyIfMatch(req);
     if (key) {
         let body = '';
@@ -14,7 +14,7 @@ http.createServer(async (req, res) => {
         req.on('end', async () => {
             try {
                 const response = JSON.stringify(await jsonExchangeServiceAgent.handleRequest(key, JSON.parse(body), customerContext));
-                res.writeHead(200, { 'Content-Type': 'application/json' })
+                res.writeHead(200, {'Content-Type': 'application/json'})
                 res.end(response);
             } catch (err) {
                 res.writeHead(400);
