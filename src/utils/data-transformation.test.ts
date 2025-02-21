@@ -34,7 +34,15 @@ describe('DataTransformation', () => {
         it('intersection of nothing', () => {
             expect(() => DataTransformation.intersection()).toThrow();
         });
-        it('simple case', () => {
+
+        it('case with 2 sets', () => {
+            const set1 = new Set<number>([1, 2, 3, 4]);
+            const set2 = new Set<number>([4, 3, 5]);
+
+            expect(DataTransformation.intersection(set1, set2)).toStrictEqual([4, 3]);
+        });
+
+        it('case with 3 sets', () => {
             const set1 = new Set<number>([1, 2, 3, 4]);
             const set2 = new Set<number>([3, 9, 1]);
             const set3 = new Set<number>([1, 3, 4, 5]);
