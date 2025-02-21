@@ -1,4 +1,4 @@
-import {BasicValidation} from './basic-validation';
+import {Validation} from './validation';
 
 describe('basic-validation', () => {
     describe('string', () => {
@@ -31,7 +31,7 @@ describe('basic-validation', () => {
             'AB C',
             'A C',
         ])('should throw: %s', (invalid: string) => {
-            expect(() => BasicValidation.validateString(invalid, {
+            expect(() => Validation.validateString(invalid, {
                 minLength: 3,
                 maxLength: 7,
                 regExp: /^[A-Z]*$/
@@ -45,7 +45,7 @@ describe('basic-validation', () => {
             'ABCDEF',
             'ABCDEFG',
         ])('should NOT throw: %s', (valid: string) => {
-            BasicValidation.validateString(valid, {minLength: 3, maxLength: 7, regExp: /^[A-Z]*$/});
+            Validation.validateString(valid, {minLength: 3, maxLength: 7, regExp: /^[A-Z]*$/});
         });
     });
 
@@ -65,7 +65,7 @@ describe('basic-validation', () => {
             15,
             2846465862135,
         ])('should throw: %s', (invalid: number) => {
-            expect(() => BasicValidation.validateNumber(invalid, {min: 2, max: 10, step: 0.5})).toThrow();
+            expect(() => Validation.validateNumber(invalid, {min: 2, max: 10, step: 0.5})).toThrow();
         });
 
         it.each([
@@ -76,7 +76,7 @@ describe('basic-validation', () => {
             8.5,
             10,
         ])('should NOT throw: %s', (valid: number) => {
-            BasicValidation.validateNumber(valid, {min: 2, max: 10, step: 0.5});
+            Validation.validateNumber(valid, {min: 2, max: 10, step: 0.5});
         });
     });
 
@@ -92,14 +92,14 @@ describe('basic-validation', () => {
             [[0, 0]],
             [[1, 2, 3, 4, 5]],
         ])('should throw: %s', (invalid: number[]) => {
-            expect(() => BasicValidation.validateArray(invalid, {minLength: 3, maxLength: 4})).toThrow();
+            expect(() => Validation.validateArray(invalid, {minLength: 3, maxLength: 4})).toThrow();
         });
 
         it.each([
             [[1, 2, 3]],
             [[1, 2, 3, 4]],
         ])('should NOT throw: %s', (valid: number[]) => {
-            BasicValidation.validateArray(valid, {minLength: 3, maxLength: 4});
+            Validation.validateArray(valid, {minLength: 3, maxLength: 4});
         });
     });
 
@@ -111,7 +111,7 @@ describe('basic-validation', () => {
             '' as any as Object,
             0 as any as Object,
         ])('should throw: %s', (invalid: any) => {
-            expect(() => BasicValidation.validateObject(invalid, {
+            expect(() => Validation.validateObject(invalid, {
                 requiredKeys: new Set(['id', 'name']),
                 optionalKeys: new Set(['description'])
             })).toThrow();
@@ -121,7 +121,7 @@ describe('basic-validation', () => {
             {id: 123, name: 'Name'},
             {id: 123, name: 'Name', description: 'des'},
         ])('should NOT throw: %s', (valid: any) => {
-            BasicValidation.validateObject(valid, {
+            Validation.validateObject(valid, {
                 requiredKeys: new Set(['id', 'name']),
                 optionalKeys: new Set(['description'])
             })

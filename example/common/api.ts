@@ -1,4 +1,4 @@
-import {BasicValidation} from '../../src/utils/basic-validation';
+import {Validation} from '../../src/utils/validation';
 import {JsonExchangeInMemoryStatisticsInterface} from '../../src/in-memory-statistic';
 import {JsonExchange} from '../../src/json-exchange';
 
@@ -16,12 +16,12 @@ export interface Item extends ItemPK {
 }
 
 export const itemValidation = (item: Item): void => {
-    BasicValidation.validateObject(item, {
+    Validation.validateObject(item, {
         requiredKeys: new Set<keyof Item>(['id', 'name', 'description']),
         optionalKeys: new Set<keyof Item>(['createdBy', 'modifiedBy']),
     });
-    BasicValidation.validateString(item.name, {minLength: 2, maxLength: 64});
-    BasicValidation.validateString(item.description, {minLength: 0, maxLength: 256});
+    Validation.validateString(item.name, {minLength: 2, maxLength: 64});
+    Validation.validateString(item.description, {minLength: 0, maxLength: 256});
 };
 
 export interface SubItem {
@@ -46,22 +46,22 @@ export interface UserData {
 }
 
 export const userDataValidation = (userData: UserData): void => {
-    BasicValidation.validateObject(userData, {
+    Validation.validateObject(userData, {
         requiredKeys: new Set(['name', 'email', 'address']),
     });
-    BasicValidation.validateString(userData.name, {minLength: 4, maxLength: 64});
-    BasicValidation.validateString(userData.email, {minLength: 0, maxLength: 256});
-    BasicValidation.validateString(userData.address, {minLength: 4, maxLength: 256});
+    Validation.validateString(userData.name, {minLength: 4, maxLength: 64});
+    Validation.validateString(userData.email, {minLength: 0, maxLength: 256});
+    Validation.validateString(userData.address, {minLength: 4, maxLength: 256});
 };
 
 export const subItemValidation = (subItem: SubItem): void => {
-    BasicValidation.validateObject(subItem, {
+    Validation.validateObject(subItem, {
         requiredKeys: new Set<keyof SubItem>(['id', 'name', 'description', 'itemId']),
         optionalKeys: new Set<keyof SubItem>(['createdBy', 'modifiedBy']),
     });
-    BasicValidation.validateString(subItem.name, {minLength: 2, maxLength: 64});
-    BasicValidation.validateString(subItem.description, {minLength: 0, maxLength: 256});
-    BasicValidation.validateNumber(subItem.itemId);
+    Validation.validateString(subItem.name, {minLength: 2, maxLength: 64});
+    Validation.validateString(subItem.description, {minLength: 0, maxLength: 256});
+    Validation.validateNumber(subItem.itemId);
 };
 
 export const allJsonExchanges = {

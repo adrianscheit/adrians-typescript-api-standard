@@ -1,4 +1,4 @@
-export class BasicValidation {
+export class Validation {
     static validateString(
         value: unknown,
         options: {
