@@ -1,5 +1,5 @@
-import {JsonExchange} from "./common";
 import {JsonExchangeServiceAgent} from "./service";
+import {JsonExchange} from "./json-exchange";
 
 describe('service', () => {
     const oneExchange = {

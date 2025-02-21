@@ -1,4 +1,3 @@
-export {JsonExchange} from './common';
 export {JsonExchangeServiceAgent} from './service';
 export {
     CustomerStrategyInternal,
@@ -7,3 +6,4 @@ export {
     JsonExchangeCustomerAgent,
 } from './customer';
 export {BasicValidation} from './basic-validation';
+export {JsonExchange} from "./json-exchange";
