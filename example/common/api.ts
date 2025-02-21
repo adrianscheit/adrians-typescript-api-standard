@@ -1,5 +1,5 @@
 import {Validation} from '../../src/utils/validation';
-import {JsonExchangeInMemoryStatisticsInterface} from '../../src/in-memory-statistic';
+import {JsonExchangeInMemoryStatisticsInterface} from '../../src/service/in-memory-statistic';
 import {JsonExchange} from '../../src/json-exchange';
 
 export interface ItemPK {

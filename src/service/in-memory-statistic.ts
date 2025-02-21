@@ -1,4 +1,4 @@
-import {JsonExchange} from './json-exchange';
+import {JsonExchange} from '../json-exchange';
 
 export interface InMemInMemoryStatisticDTO {
     quantity: number;

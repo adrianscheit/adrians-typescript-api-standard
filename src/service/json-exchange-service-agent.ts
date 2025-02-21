@@ -1,4 +1,4 @@
-import {InMemoryStatistic, ServiceAgentStat} from '../in-memory-statistic';
+import {InMemoryStatistic, ServiceAgentStat} from './in-memory-statistic';
 import {JsonExchange, JsonExchangesRoot} from '../json-exchange';
 
 type JsonExchangeServiceHandle<CustomerContext, REQ_DTO, RES_DTO> = (request: REQ_DTO, customerContext: CustomerContext, key: string) => Promise<RES_DTO>;
