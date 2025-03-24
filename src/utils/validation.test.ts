@@ -1,4 +1,4 @@
-import {Validation} from './validation';
+import {ValidateArrayOptions, ValidateObjectOptions, Validation} from './validation';
 
 describe('basic-validation', () => {
     describe('string', () => {
@@ -81,50 +81,64 @@ describe('basic-validation', () => {
     });
 
     describe('array', () => {
+        const options: ValidateArrayOptions = {minLength: 3, maxLength: 4, validate: {number: {}}};
+
+
         it.each([
-            [undefined as any as number[]],
-            [null as any as number[]],
-            [{} as any as number[]],
-            ['' as any as number[]],
-            [0 as any as number[]],
+            [undefined],
+            [null],
+            [{}],
+            [''],
+            [0],
             [[]],
             [[0]],
             [[0, 0]],
             [[1, 2, 3, 4, 5]],
-        ])('should throw: %s', (invalid: number[]) => {
-            expect(() => Validation.validateArray(invalid, {minLength: 3, maxLength: 4})).toThrow();
+            // Invalid inner validation:
+            [[1, '', 3]],
+            [[1, 2, null]],
+        ])('should throw: %s', (invalid: unknown) => {
+            expect(() => Validation.validateArray(invalid, options)).toThrow();
         });
 
         it.each([
             [[1, 2, 3]],
             [[1, 2, 3, 4]],
         ])('should NOT throw: %s', (valid: number[]) => {
-            Validation.validateArray(valid, {minLength: 3, maxLength: 4});
+            Validation.validateArray(valid, options);
         });
     });
 
     describe('object', () => {
+        const options: ValidateObjectOptions = {
+            requiredKeys: {id: {number: {}}, name: {string: {}}},
+            optionalKeys: {description: {string: {}}},
+        };
+
         it.each([
             undefined as any as Object,
             null as any as Object,
             [] as any as Object,
             '' as any as Object,
             0 as any as Object,
-        ])('should throw: %s', (invalid: any) => {
-            expect(() => Validation.validateObject(invalid, {
-                requiredKeys: new Set(['id', 'name']),
-                optionalKeys: new Set(['description'])
-            })).toThrow();
+            // Wrong keys:
+            {id: 123},
+            {name: 'Name'},
+            {id: 123, name: 'Name', description: 'des', tooMuch: 123},
+            // Invalid inner validation:
+            {id: 'a', name: 'Name'},
+            {id: 123, name: 111, description: 'des'},
+            {id: 123, name: 'Name', description: 123},
+            {id: 123, name: 'Name', description: {}},
+        ])('should throw: %s', (invalid: unknown) => {
+            expect(() => Validation.validateObject(invalid, options)).toThrow();
         });
 
         it.each([
             {id: 123, name: 'Name'},
             {id: 123, name: 'Name', description: 'des'},
-        ])('should NOT throw: %s', (valid: any) => {
-            Validation.validateObject(valid, {
-                requiredKeys: new Set(['id', 'name']),
-                optionalKeys: new Set(['description'])
-            })
+        ])('should NOT throw: %s', (valid: unknown) => {
+            Validation.validateObject(valid, options);
         });
     });
 });

@@ -1,33 +1,52 @@
-interface LabelOption {
+export interface LabelOption {
     label?: string;
 }
 
-interface ValidateStringOptions extends LabelOption {
+export interface ValidateStringOptions extends LabelOption {
     minLength?: number;
     maxLength?: number;
     regExp?: RegExp;
 }
 
-interface ValidateNumberOptions extends LabelOption {
+export interface ValidateNumberOptions extends LabelOption {
     min?: number;
     max?: number;
     step?: number;
 }
 
-interface ValidateArrayOptions extends LabelOption {
+export interface ValidateArrayOptions extends LabelOption {
     minLength?: number;
     maxLength?: number;
+    validate: ValidationDefinition;
 }
 
-interface ValidateObjectOptions<T> extends LabelOption {
-    requiredKeys?: ReadonlySet<keyof T>;
-    optionalKeys?: ReadonlySet<keyof T>;
+export interface ValidateObjectOptions extends LabelOption {
+    requiredKeys?: { [key: string]: ValidationDefinition };
+    optionalKeys?: { [key: string]: ValidationDefinition };
 }
+
+export type ValidationDefinition =
+    { string: ValidateStringOptions } |
+    { number: ValidateNumberOptions } |
+    { array: ValidateArrayOptions } |
+    { object: ValidateObjectOptions };
 
 export class Validation {
+    static readonly validationrsMap: { [key: string]: (value: unknown, options: any) => void } = {
+        string: this.validateString,
+        number: this.validateNumber,
+        array: this.validateArray,
+        object: this.validateObject,
+    };
+
+    static validate(value: unknown, validationDefinition: ValidationDefinition): void {
+        const [key, options] = Object.entries(validationDefinition)[0];
+        this.validationrsMap[key].bind(this)(value, options);
+    }
+
     static validateString(
         value: unknown,
-        options: ValidateStringOptions = {},
+        options: ValidateStringOptions,
     ): void {
         this.addOptionalErrorLabel(options, () => {
             if (typeof (value) !== 'string') {
@@ -47,7 +66,7 @@ export class Validation {
 
     static validateNumber(
         value: unknown,
-        options: ValidateNumberOptions = {},
+        options: ValidateNumberOptions,
     ): void {
         this.addOptionalErrorLabel(options, () => {
             if (typeof (value) !== 'number') {
@@ -66,8 +85,8 @@ export class Validation {
     }
 
     static validateArray(
-        value: unknown[],
-        options: ValidateArrayOptions = {},
+        value: unknown,
+        options: ValidateArrayOptions,
     ): void {
         this.addOptionalErrorLabel(options, () => {
             if (!Array.isArray(value)) {
@@ -79,12 +98,15 @@ export class Validation {
             if (options.maxLength !== undefined && value.length > options.maxLength) {
                 throw new Error(`should have maximum ${options.maxLength} characters`);
             }
+            for (const item of value) {
+                this.validate(item, options.validate);
+            }
         });
     }
 
     static validateObject<T>(
-        value: T,
-        options: ValidateObjectOptions<T> = {},
+        value: unknown,
+        options: ValidateObjectOptions,
     ): void {
         this.addOptionalErrorLabel(options, () => {
             if (typeof value !== 'object') {
@@ -93,25 +115,26 @@ export class Validation {
             if (Array.isArray(value)) {
                 throw new Error(`its an array`);
             }
-            const keys = new Set<keyof T>(Object.keys(value!) as any[]);
+            const keys = new Set<string>(Object.keys(value!) as any[]);
+
             if (options.requiredKeys !== undefined) {
-                for (const key of options.requiredKeys) {
+                for (const key of Object.keys(options.requiredKeys)) {
                     if (!keys.has(key)) {
                         throw new Error(`it does not contains required key ${String(key)}`);
                     }
                 }
             }
-            if (options.optionalKeys !== undefined) {
-                for (const key of keys) {
-                    if (!options.requiredKeys?.has(key) && !options.optionalKeys.has(key)) {
-                        throw new Error(`it contains keys that should not be there ${String(key)}`);
-                    }
+            for (const key of keys) {
+                const validationDefinition: ValidationDefinition | undefined = options.requiredKeys?.[key] || options.optionalKeys?.[key];
+                if (!validationDefinition) {
+                    throw new Error(`it contains keys that should not be there ${String(key)}`);
                 }
+                this.validate((value as any)[key], validationDefinition);
             }
         });
     }
 
-    static addOptionalErrorLabel(options: { label?: string }, coveredIfLabel: () => void): void {
+    static addOptionalErrorLabel(options: LabelOption, coveredIfLabel: () => void): void {
         if (options.label) {
             try {
                 coveredIfLabel();
