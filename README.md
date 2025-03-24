@@ -1,4 +1,6 @@
 # adrians-typescript-api-standard (very early version) WORK IN PROGRESS TO ACHIVE MVP
+This a try to organise an API (primarily using JSON), using TypeScript, common code, and its benefits.
+
 ## The problem
 Having any API seems in the usual case a heavy load for developers to maintain it, in worse cases it is so bad that developers are afraid to refactor it, or change it. Usually it has heavy testing on both sides of the communication, still not eliminating all bugs and temporal time-downs. Seeing the problems during years of professional experience, seeing lots of money burned because of it, brings to me many ideas how to fix it, this is implementation of one of those ideas. 
 

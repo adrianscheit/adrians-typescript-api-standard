@@ -1,12 +1,33 @@
+interface LabelOption {
+    label?: string;
+}
+
+interface ValidateStringOptions extends LabelOption {
+    minLength?: number;
+    maxLength?: number;
+    regExp?: RegExp;
+}
+
+interface ValidateNumberOptions extends LabelOption {
+    min?: number;
+    max?: number;
+    step?: number;
+}
+
+interface ValidateArrayOptions extends LabelOption {
+    minLength?: number;
+    maxLength?: number;
+}
+
+interface ValidateObjectOptions<T> extends LabelOption {
+    requiredKeys?: ReadonlySet<keyof T>;
+    optionalKeys?: ReadonlySet<keyof T>;
+}
+
 export class Validation {
     static validateString(
         value: unknown,
-        options: {
-            label?: string;
-            minLength?: number;
-            maxLength?: number;
-            regExp?: RegExp;
-        } = {},
+        options: ValidateStringOptions = {},
     ): void {
         this.addOptionalErrorLabel(options, () => {
             if (typeof (value) !== 'string') {
@@ -26,12 +47,7 @@ export class Validation {
 
     static validateNumber(
         value: unknown,
-        options: {
-            label?: string;
-            min?: number;
-            max?: number;
-            step?: number;
-        } = {},
+        options: ValidateNumberOptions = {},
     ): void {
         this.addOptionalErrorLabel(options, () => {
             if (typeof (value) !== 'number') {
@@ -51,11 +67,7 @@ export class Validation {
 
     static validateArray(
         value: unknown[],
-        options: {
-            label?: string;
-            minLength?: number;
-            maxLength?: number;
-        } = {},
+        options: ValidateArrayOptions = {},
     ): void {
         this.addOptionalErrorLabel(options, () => {
             if (!Array.isArray(value)) {
@@ -72,11 +84,7 @@ export class Validation {
 
     static validateObject<T>(
         value: T,
-        options: {
-            label?: string;
-            requiredKeys?: ReadonlySet<keyof T>;
-            optionalKeys?: ReadonlySet<keyof T>;
-        } = {},
+        options: ValidateObjectOptions<T> = {},
     ): void {
         this.addOptionalErrorLabel(options, () => {
             if (typeof value !== 'object') {
