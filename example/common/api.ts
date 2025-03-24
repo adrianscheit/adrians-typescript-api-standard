@@ -1,6 +1,8 @@
-import {Validation} from '../../src/utils/validation/validation';
 import {JsonExchangeInMemoryStatisticsInterface} from '../../src/service/in-memory-statistic';
 import {JsonExchange} from '../../src/json-exchange';
+import {ObjectValidator} from "../../src/utils/validation/object-validator";
+import {StringValidator} from "../../src/utils/validation/string-validator";
+import {NumberValidator} from "../../src/utils/validation/number-validator";
 
 export interface ItemPK {
     id: number;
@@ -15,13 +17,20 @@ export interface Item extends ItemPK {
     modifiedTimeStamp?: number;
 }
 
+export const itemValidator = new ObjectValidator({
+    requiredKeys: {
+        id: new NumberValidator({}),
+        name: new StringValidator({minLength: 2, maxLength: 64}),
+        description: new StringValidator({minLength: 0, maxLength: 256}),
+    },
+    optionalKeys: {
+        createdBy: new StringValidator({}),
+        modifiedBy: new StringValidator({}),
+    },
+});
+
 export const itemValidation = (item: Item): void => {
-    Validation.validateObject(item, {
-        requiredKeys: new Set<keyof Item>(['id', 'name', 'description']),
-        optionalKeys: new Set<keyof Item>(['createdBy', 'modifiedBy']),
-    });
-    Validation.validateString(item.name, {minLength: 2, maxLength: 64});
-    Validation.validateString(item.description, {minLength: 0, maxLength: 256});
+    itemValidator.validate(item);
 };
 
 export interface SubItem {
@@ -45,23 +54,33 @@ export interface UserData {
     address: string;
 }
 
+export const userDataValidator = new ObjectValidator({
+    requiredKeys: {
+        name: new StringValidator({minLength: 4, maxLength: 64}),
+        email: new StringValidator({minLength: 0, maxLength: 256}),
+        address: new StringValidator({minLength: 4, maxLength: 256}),
+    },
+});
+
 export const userDataValidation = (userData: UserData): void => {
-    Validation.validateObject(userData, {
-        requiredKeys: new Set(['name', 'email', 'address']),
-    });
-    Validation.validateString(userData.name, {minLength: 4, maxLength: 64});
-    Validation.validateString(userData.email, {minLength: 0, maxLength: 256});
-    Validation.validateString(userData.address, {minLength: 4, maxLength: 256});
+    userDataValidator.validate(userData);
 };
 
+export const subItemValidator = new ObjectValidator({
+    requiredKeys: {
+        id: new NumberValidator({}),
+        name: new StringValidator({minLength: 2, maxLength: 64}),
+        description: new StringValidator({minLength: 0, maxLength: 256}),
+        itemId: new NumberValidator({}),
+    },
+    optionalKeys: {
+        createdBy: new StringValidator({}),
+        modifiedBy: new StringValidator({}),
+    },
+});
+
 export const subItemValidation = (subItem: SubItem): void => {
-    Validation.validateObject(subItem, {
-        requiredKeys: new Set<keyof SubItem>(['id', 'name', 'description', 'itemId']),
-        optionalKeys: new Set<keyof SubItem>(['createdBy', 'modifiedBy']),
-    });
-    Validation.validateString(subItem.name, {minLength: 2, maxLength: 64});
-    Validation.validateString(subItem.description, {minLength: 0, maxLength: 256});
-    Validation.validateNumber(subItem.itemId);
+    subItemValidator.validate(subItem);
 };
 
 export const allJsonExchanges = {
