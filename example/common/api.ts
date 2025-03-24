@@ -1,4 +1,4 @@
-import {Validation} from '../../src/utils/validation';
+import {Validation} from '../../src/utils/validation/validation';
 import {JsonExchangeInMemoryStatisticsInterface} from '../../src/service/in-memory-statistic';
 import {JsonExchange} from '../../src/json-exchange';
 
