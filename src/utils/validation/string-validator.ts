@@ -1,4 +1,4 @@
-import {LabelOption, Validator} from "./validator";
+import {LabelOption, Validator} from './validator';
 
 export interface ValidateStringOptions extends LabelOption {
     minLength?: number;
@@ -9,10 +9,6 @@ export interface ValidateStringOptions extends LabelOption {
 export class StringValidator extends Validator {
     constructor(private readonly options: ValidateStringOptions) {
         super();
-    }
-
-    validate(value: unknown): void {
-        StringValidator.validate(value, this.options);
     }
 
     static validate(
@@ -33,5 +29,9 @@ export class StringValidator extends Validator {
                 throw new Error(`${value} does not match the pattern ${options.regExp}`);
             }
         });
+    }
+
+    validate(value: unknown): void {
+        StringValidator.validate(value, this.options);
     }
 }

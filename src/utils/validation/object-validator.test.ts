@@ -1,6 +1,6 @@
-import {ObjectValidator, ValidateObjectOptions} from "./object-validator";
-import {NumberValidator} from "./number-validator";
-import {StringValidator} from "./string-validator";
+import {ObjectValidator, ValidateObjectOptions} from './object-validator';
+import {NumberValidator} from './number-validator';
+import {StringValidator} from './string-validator';
 
 describe('object', () => {
     const options: ValidateObjectOptions = {

@@ -16,7 +16,7 @@ export class JsonExchangeCustomerAgent {
     async exchange<REQ_DTO, RES_DTO>(jsonExchange: JsonExchange<REQ_DTO, RES_DTO>, request: REQ_DTO): Promise<RES_DTO> {
         const key = this.jsonExchangeToKey.get(jsonExchange);
         if (key) {
-            jsonExchange.options.preProcessor?.(request);
+            await jsonExchange.options.preProcessor?.(request);
             return await this.customerAdapter.exchange<REQ_DTO, RES_DTO>(key, request);
         }
         throw `Exchange not found`;

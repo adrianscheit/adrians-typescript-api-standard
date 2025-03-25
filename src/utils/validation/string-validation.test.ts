@@ -1,4 +1,4 @@
-import {StringValidator, ValidateStringOptions} from "./string-validator";
+import {StringValidator, ValidateStringOptions} from './string-validator';
 
 describe('string', () => {
     const options: ValidateStringOptions = {

@@ -2,15 +2,20 @@ import {JsonExchange} from '../json-exchange';
 import {JsonExchangeCustomerAgent} from './json-exchange-customer-agent';
 
 describe('JsonExchangeCustomerAgent', () => {
-    it('exchange with key with special characters and is reversable by service agent', () => {
+    it('exchange with key with special characters and is reversable by service agent', (done) => {
+        const keyWithSpecialChars = 'key/with Characters!';
         const jsonExchanges = {
-            'key/with Characters!': new JsonExchange(),
+            [keyWithSpecialChars]: new JsonExchange<number, void>(),
         };
-        const agent = new JsonExchangeCustomerAgent(jsonExchanges, {exchange: jest.fn()});
+        const agent = new JsonExchangeCustomerAgent(jsonExchanges, {
+            exchange: (key, body): any => {
+                expect(key).toBe(keyWithSpecialChars);
+                expect(body).toBe(1234);
+                done();
+            }
+        });
 
-        agent.exchange(jsonExchanges['key/with Characters!'], 1234);
-        expect(agent.customerAdapter.exchange).toHaveBeenCalledTimes(1);
-        expect(agent.customerAdapter.exchange).toHaveBeenCalledWith('key/with Characters!', 1234);
+        agent.exchange(jsonExchanges[keyWithSpecialChars], 1234);
     });
 
     it('exchange with unknown exchange', (done) => {

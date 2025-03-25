@@ -1,5 +1,5 @@
-import {ArrayValidator, ValidateArrayOptions} from "./array-validator";
-import {NumberValidator} from "./number-validator";
+import {ArrayValidator, ValidateArrayOptions} from './array-validator';
+import {NumberValidator} from './number-validator';
 
 describe('array', () => {
     const options: ValidateArrayOptions = {minLength: 3, maxLength: 4, validate: new NumberValidator({})};

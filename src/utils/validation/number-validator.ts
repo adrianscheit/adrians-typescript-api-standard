@@ -1,4 +1,4 @@
-import {LabelOption, Validator} from "./validator";
+import {LabelOption, Validator} from './validator';
 
 export interface ValidateNumberOptions extends LabelOption {
     min?: number;
@@ -9,10 +9,6 @@ export interface ValidateNumberOptions extends LabelOption {
 export class NumberValidator extends Validator {
     constructor(private readonly options: ValidateNumberOptions) {
         super();
-    }
-
-    validate(value: unknown): void {
-        NumberValidator.validate(value, this.options);
     }
 
     static validate(
@@ -33,5 +29,9 @@ export class NumberValidator extends Validator {
                 throw new Error(`has a wrong step ${options.step}`);
             }
         });
+    }
+
+    validate(value: unknown): void {
+        NumberValidator.validate(value, this.options);
     }
 }

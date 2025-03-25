@@ -1,4 +1,4 @@
-import {NumberValidator, ValidateNumberOptions} from "./number-validator";
+import {NumberValidator, ValidateNumberOptions} from './number-validator';
 
 describe('number', () => {
     const options: ValidateNumberOptions = {min: 2, max: 10, step: 0.5};

@@ -3,8 +3,6 @@ export interface LabelOption {
 }
 
 export abstract class Validator {
-    abstract validate(value: unknown): void;
-
     static addOptionalErrorLabel(options: LabelOption, coveredIfLabel: () => void): void {
         if (options.label) {
             try {
@@ -16,4 +14,6 @@ export abstract class Validator {
             coveredIfLabel();
         }
     }
+
+    abstract validate(value: unknown): void;
 }

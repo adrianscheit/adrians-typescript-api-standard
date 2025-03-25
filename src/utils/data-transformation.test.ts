@@ -1,4 +1,4 @@
-import {DataTransformation} from "./data-transformation";
+import {DataTransformation} from './data-transformation';
 
 describe('DataTransformation', () => {
     it('simple scenario with arrays', () => {

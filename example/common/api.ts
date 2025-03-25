@@ -1,8 +1,8 @@
 import {JsonExchangeInMemoryStatisticsInterface} from '../../src/service/in-memory-statistic';
 import {JsonExchange} from '../../src/json-exchange';
-import {ObjectValidator} from "../../src/utils/validation/object-validator";
-import {StringValidator} from "../../src/utils/validation/string-validator";
-import {NumberValidator} from "../../src/utils/validation/number-validator";
+import {ObjectValidator} from '../../src/utils/validation/object-validator';
+import {StringValidator} from '../../src/utils/validation/string-validator';
+import {NumberValidator} from '../../src/utils/validation/number-validator';
 
 export interface ItemPK {
     id: number;

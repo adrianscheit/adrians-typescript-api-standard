@@ -72,7 +72,7 @@ export class JsonExchangeServiceAgent<CustomerContext> {
             if (jsonExchange.options.preProcessor) {
                 await JsonExchangeServiceAgent.timeMeasure(
                     stat.preProcessorTime,
-                    async () => jsonExchange.options.preProcessor!(request),
+                    () => jsonExchange.options.preProcessor!(request),
                 );
             }
             const response = await JsonExchangeServiceAgent.timeMeasure(

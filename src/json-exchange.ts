@@ -8,23 +8,23 @@ export class JsonExchange<REQ_DTO, RES_DTO> {
 
     constructor(
         readonly options: {
-            preProcessor?: (request: REQ_DTO) => void;
+            preProcessor?: (request: REQ_DTO) => Promise<void>;
         } = {}
     ) {
     }
 
-    static generateCUDExchanges = <DTO>(preProcessor: (request: DTO) => void) => ({
+    static generateCUDExchanges = <DTO>(preProcessor: (request: DTO) => Promise<void>) => ({
         create: new JsonExchange<DTO, DTO>({preProcessor}),
         update: new JsonExchange<DTO, DTO>({preProcessor}),
         delete: new JsonExchange<DTO, void>(),
     });
 
-    static generateCRUDExchanges = <DTO>(preProcessor: (request: DTO) => void) => ({
+    static generateCRUDExchanges = <DTO>(preProcessor: (request: DTO) => Promise<void>) => ({
         ...this.generateCUDExchanges<DTO>(preProcessor),
         readAll: new JsonExchange<void, DTO[]>(),
     });
 
-    static generateRecordExchanges = <DTO>(preProcessor: (request: DTO) => void) => ({
+    static generateRecordExchanges = <DTO>(preProcessor: (request: DTO) => Promise<void>) => ({
         read: new JsonExchange<void, DTO>(),
         update: new JsonExchange<DTO, DTO>({preProcessor}),
     });

@@ -1,4 +1,4 @@
-import {LabelOption, Validator} from "./validator";
+import {LabelOption, Validator} from './validator';
 
 export interface ValidateObjectOptions extends LabelOption {
     requiredKeys?: { [key: string]: Validator };
@@ -8,10 +8,6 @@ export interface ValidateObjectOptions extends LabelOption {
 export class ObjectValidator extends Validator {
     constructor(private readonly options: ValidateObjectOptions) {
         super();
-    }
-
-    validate(value: unknown): void {
-        ObjectValidator.validate(value, this.options);
     }
 
     static validate(
@@ -42,5 +38,9 @@ export class ObjectValidator extends Validator {
                 validationDefinition.validate((value as any)[key]);
             }
         });
+    }
+
+    validate(value: unknown): void {
+        ObjectValidator.validate(value, this.options);
     }
 }

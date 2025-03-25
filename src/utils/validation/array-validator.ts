@@ -1,4 +1,4 @@
-import {LabelOption, Validator} from "./validator";
+import {LabelOption, Validator} from './validator';
 
 export interface ValidateArrayOptions extends LabelOption {
     minLength?: number;
@@ -9,10 +9,6 @@ export interface ValidateArrayOptions extends LabelOption {
 export class ArrayValidator extends Validator {
     constructor(private readonly options: ValidateArrayOptions) {
         super();
-    }
-
-    validate(value: unknown): void {
-        ArrayValidator.validate(value, this.options);
     }
 
     static validate(
@@ -33,5 +29,9 @@ export class ArrayValidator extends Validator {
                 options.validate.validate(item);
             }
         });
+    }
+
+    validate(value: unknown): void {
+        ArrayValidator.validate(value, this.options);
     }
 }
