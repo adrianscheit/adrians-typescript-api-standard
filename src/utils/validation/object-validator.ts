@@ -3,6 +3,7 @@ import {LabelOption, Validator} from './validator';
 export interface ValidateObjectOptions extends LabelOption {
     requiredKeys?: { [key: string]: Validator };
     optionalKeys?: { [key: string]: Validator };
+    failOnUnknownKey?: boolean;
 }
 
 export class ObjectValidator extends Validator {
@@ -33,9 +34,12 @@ export class ObjectValidator extends Validator {
             for (const key of keys) {
                 const validationDefinition: Validator | undefined = options.requiredKeys?.[key] || options.optionalKeys?.[key];
                 if (!validationDefinition) {
-                    throw new Error(`it contains keys that should not be there ${String(key)}`);
+                    if (options.failOnUnknownKey) {
+                        throw new Error(`it contains keys that should not be there ${String(key)}`);
+                    }
+                } else {
+                    validationDefinition.validate((value as any)[key]);
                 }
-                validationDefinition.validate((value as any)[key]);
             }
         });
     }

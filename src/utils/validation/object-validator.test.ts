@@ -6,19 +6,23 @@ describe('object', () => {
     const options: ValidateObjectOptions = {
         requiredKeys: {id: new NumberValidator({}), name: new StringValidator({})},
         optionalKeys: {description: new StringValidator({})},
+        failOnUnknownKey: true,
     };
     const validator = new ObjectValidator(options);
 
     it.each([
-        undefined as any as Object,
-        null as any as Object,
-        [] as any as Object,
-        '' as any as Object,
-        0 as any as Object,
+        undefined,
+        null,
+        [],
+        '',
+        0,
+        1,
+        3.1416,
         // Wrong keys:
         {id: 123},
         {name: 'Name'},
         {id: 123, name: 'Name', description: 'des', tooMuch: 123},
+        {id: 123, name: 'Name', description: 'des', tooMuch: ''},
         // Invalid inner validation:
         {id: 'a', name: 'Name'},
         {id: 123, name: 111, description: 'des'},

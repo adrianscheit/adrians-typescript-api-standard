@@ -4,17 +4,17 @@ describe('string', () => {
     const options: ValidateStringOptions = {
         minLength: 3,
         maxLength: 7,
-        regExp: /^[A-Z]*$/
+        regExp: /^[A-Z]*$/,
     };
     const validator = new StringValidator(options);
 
     it.each([
-        undefined as any as string,
-        null as any as string,
-        4 as any as string,
-        {} as any as string,
-        {AAA: 'AAA'} as any as string,
-        [] as any as string,
+        undefined,
+        null,
+        4,
+        {},
+        {AAA: 'AAA'},
+        [],
         '',
         'A',
         'AB',
@@ -36,7 +36,7 @@ describe('string', () => {
         'A BC',
         'AB C',
         'A C',
-    ])('should throw: %s', (invalid: string) => {
+    ])('should throw: %s', (invalid: unknown) => {
         expect(() => StringValidator.validate(invalid, options)).toThrow();
         expect(() => validator.validate(invalid)).toThrow();
     });
@@ -48,7 +48,7 @@ describe('string', () => {
         'ABCDEF',
         'ABCDEFG',
         'ABCXYZ',
-    ])('should NOT throw: %s', (valid: string) => {
+    ])('should NOT throw: %s', (valid: unknown) => {
         StringValidator.validate(valid, options);
         validator.validate(valid);
     });

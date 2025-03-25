@@ -5,9 +5,11 @@ describe('number', () => {
     const validator = new NumberValidator(options);
 
     it.each([
-        undefined as any as number,
-        null as any as number,
-        '' as any as number,
+        undefined,
+        null,
+        '',
+        {},
+        [],
         -10,
         -1,
         0,
@@ -21,7 +23,8 @@ describe('number', () => {
         11,
         15,
         2846465862135,
-    ])('should throw: %s', (invalid: number) => {
+        28464658621352846465862135n,
+    ])('should throw: %s', (invalid: unknown) => {
         expect(() => NumberValidator.validate(invalid, options)).toThrow();
         expect(() => validator.validate(invalid)).toThrow();
     });
@@ -35,7 +38,7 @@ describe('number', () => {
         8.5,
         9.5,
         10,
-    ])('should NOT throw: %s', (valid: number) => {
+    ])('should NOT throw: %s', (valid: unknown) => {
         NumberValidator.validate(valid, options);
         validator.validate(valid);
     });
