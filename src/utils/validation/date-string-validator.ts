@@ -20,6 +20,11 @@ export class ValidateDateStringOptionsCompiled {
 }
 
 export class DateStringValidator extends Validator {
+    static readonly minuteInMs = 1000 * 60;
+    static readonly hourInMs = 60 * this.minuteInMs;
+    static readonly dayInMs = 24 * this.hourInMs;
+    static readonly weekInMs = 7 * this.dayInMs;
+
     readonly validateDateStringOptionsCompiled: ValidateDateStringOptionsCompiled =
         new ValidateDateStringOptionsCompiled(this.options);
 
