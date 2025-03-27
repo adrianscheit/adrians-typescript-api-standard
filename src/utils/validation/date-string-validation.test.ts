@@ -59,4 +59,10 @@ describe('date-string', () => {
         DateStringValidator.validate(valid, compiledOptions);
         validator.validate(valid);
     });
+
+    it('convert ms time to unix time', () => {
+        expect(DateStringValidator.convertMsToUnixTime(
+            DateStringValidator.convertDateStringToMs('1970-01-01T00:00:00Z') + DateStringValidator.weekInMs
+        )).toBe(DateStringValidator.weekInMs / 1000);
+    });
 });

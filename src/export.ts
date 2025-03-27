@@ -15,3 +15,5 @@ export {StringValidator} from './utils/validation/string-validator';
 export {NumberValidator} from './utils/validation/number-validator';
 export {ArrayValidator} from './utils/validation/array-validator';
 export {ObjectValidator} from './utils/validation/object-validator';
+export {BooleanValidator} from './utils/validation/boolean-validator';
+export {DateStringValidator} from './utils/validation/date-string-validator';

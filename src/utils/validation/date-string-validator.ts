@@ -58,6 +58,10 @@ export class DateStringValidator extends Validator {
         return ms;
     }
 
+    static convertMsToUnixTime(ms: number): number {
+        return Math.floor(ms / 1000);
+    }
+
     validate(value: unknown): void {
         DateStringValidator.validate(value, this.validateDateStringOptionsCompiled);
     }
