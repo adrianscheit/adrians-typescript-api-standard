@@ -24,4 +24,20 @@ describe('BucketSort', () => {
             ['3', new Set([data[1], data[2]])],
         ]));
     });
+
+    test('sort map', () => {
+        const data = new Map<number, string[]>([
+            [1, ['A']],
+            [2, []],
+            [3, ['C', 'A']],
+        ]);
+
+        const instance = new BucketSort<[number, string[]]>(data, ([n, s]) => s);
+
+        expect(instance.empty).toEqual(new Set([[2, []]]));
+        expect(instance.sorted).toEqual(new Map([
+            ['A', new Set([[1, ['A']], [3, ['C', 'A']]])],
+            ['C', new Set([[3, ['C', 'A']]])],
+        ]));
+    });
 });
